@@ -1,0 +1,108 @@
+@font-face {
+  font-family: "Rubik-Medium";
+  src: url("fonts/Rubik-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Rubik-Reular";
+  src: url("fonts/Rubik-Regular.ttf");
+}
+
+p#description {
+    font-family: 'Rubik-Regular', sans-serif;
+    font-size: large;
+    margin: 40px;
+}
+
+p#title{
+    font-family: 'Rubik-Medium', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1b1b1b;
+    font-family: 'Rubik-Medium', sans-serif;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    background: rgba(30, 30, 30, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+h1 {
+    font-size: 10rem;
+    color: #e63946;
+    margin-bottom: 20px;
+    animation: bounce 1.5s infinite alternate;
+}
+
+p {
+    font-size: 2.5rem;
+    color: #f1f1f1;
+    margin: 15px 0;
+}
+
+a.button {
+    display: inline-block;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    color: white;
+    background-color: #e63946;
+    border: none;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+a.button:hover {
+    background-color: #c53030;
+    transform: scale(1.1);
+}
+
+.github-link {
+    position: relative;
+    width: max-content;
+    margin: 20px;
+}
+
+.github-link img {
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.github-link img:hover {
+    transform: scale(1.2);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-30px);
+    }
+}
