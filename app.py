@@ -4,11 +4,11 @@ from httpx import ReadTimeout, ConnectTimeout
 from quart import Quart, render_template, request, abort
 from quart.helpers import make_response
 from quart.wrappers import Response
-from .get_products_data.collecting_primary_data.product_models import MarketPlaceList
-from .get_products_data.output_of_results import output_of_results
+from get_products_data.collecting_primary_data.product_models import MarketPlaceList
+from get_products_data.output_of_results import output_of_results
 import logging
-from .utils.get_config.get_quart_config import GetQuartConfig
-from .middleware.reject_middlware import reject_middlware
+from utils.get_config.get_quart_config import GetQuartConfig
+from middleware.reject_middlware import reject_middleware
 
 
 app: Quart = Quart(__name__)
@@ -43,7 +43,7 @@ async def unprocessable_content_view(error) -> Response:
 @app.route("/api/search", methods=["GET"])
 async def main_view() -> Response | str:
 
-    is_allowed: bool = await reject_middlware(request)
+    is_allowed: bool = await reject_middleware(request)
     if is_allowed:
         allowed_args = {'q',
                         'max_size',
@@ -89,10 +89,10 @@ async def main_view() -> Response | str:
         await abort(403)
 
 
-def backend_run():
+if __name__ == "__main__":
     logging.basicConfig(
         level=logging.WARNING,
-        filename="backend/secret_data/logs.log",
+        filename="secret_data/logs.log",
         filemode="a",
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s\n\n\n",
     )

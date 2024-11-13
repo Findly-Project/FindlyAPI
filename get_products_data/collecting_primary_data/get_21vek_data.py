@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 import re
 import logging
-from backend.utils.get_config.get_pars_config import GetParsConfig
+from utils.get_config.get_pars_config import GetParsConfig
 from .product_models import ProductData, ProductList
 
 

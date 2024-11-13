@@ -6767,3 +6767,91 @@ TypeError: '>' not supported between instances of 'int' and 'str'
 
 
 
+2024-11-13 23:50:54,113 - root - WARNING - Start Findly...
+
+
+
+2024-11-13 23:50:54,135 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2024-11-13 23:51:46,856 - hypercorn.error - ERROR - Error in ASGI Framework
+
+
+Traceback (most recent call last):
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/hypercorn/asyncio/task_group.py", line 27, in _handle
+    await app(scope, receive, send, sync_spawn, call_soon)
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/hypercorn/app_wrappers.py", line 34, in __call__
+    await self.app(scope, receive, send)
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1667, in __call__
+    await self.asgi_app(scope, receive, send)
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1693, in asgi_app
+    await asgi_handler(receive, send)
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py", line 52, in __call__
+    raise_task_exceptions(done)
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/utils.py", line 180, in raise_task_exceptions
+    raise task.exception()
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py", line 100, in handle_request
+    response = await _handle_exception(self.app, error)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py", line 357, in _handle_exception
+    raise error
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py", line 98, in handle_request
+    response = await self.app.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1407, in handle_request
+    return await self.handle_exception(error)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1403, in handle_request
+    return await self.full_dispatch_request(request_context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1441, in full_dispatch_request
+    result = await self.handle_user_exception(error)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1029, in handle_user_exception
+    raise error
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1439, in full_dispatch_request
+    result = await self.dispatch_request(request_context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/app.py", line 1535, in dispatch_request
+    return await self.ensure_async(handler)(**request_.view_args)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/app.py", line 71, in main_view
+    data: MarketPlaceList = await output_of_results(query=query,
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/aiocache/decorators.py", line 109, in wrapper
+    return await self.decorator(f, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/aiocache/decorators.py", line 124, in decorator
+    result = await f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/get_products_data/output_of_results.py", line 45, in output_of_results
+    pars_data: ProductList = await func(query=query,
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/get_products_data/collecting_primary_data/get_kufar_data.py", line 12, in get_kufar_data
+    kufar_pars_config: Dict = GetParsConfig.get_kufar_pars_config()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kolo/Python_Projects/FindlyAPI/utils/get_config/get_pars_config.py", line 15, in get_kufar_pars_config
+    with open("backend/secret_data/config.toml", "rb") as config:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'backend/secret_data/config.toml'
+2024-11-13 23:52:14,313 - root - WARNING - Start Findly...
+
+
+
+2024-11-13 23:52:14,322 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2024-11-13 23:52:27,159 - asyncio - WARNING - Executing <Task pending name='Task-19' coro=<ASGIHTTPConnection.handle_request() running at /home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py:98> cb=[_wait.<locals>._on_completion() at /usr/lib/python3.11/asyncio/tasks.py:509] created at /usr/lib/python3.11/asyncio/tasks.py:670> took 0.199 seconds
+
+
+
+2024-11-13 23:53:35,908 - asyncio - WARNING - Executing <Task pending name='Task-39' coro=<ASGIHTTPConnection.handle_request() running at /home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py:98> cb=[_wait.<locals>._on_completion() at /usr/lib/python3.11/asyncio/tasks.py:509] created at /usr/lib/python3.11/asyncio/tasks.py:670> took 0.246 seconds
+
+
+
+2024-11-13 23:54:33,031 - asyncio - WARNING - Executing <Task pending name='Task-65' coro=<ASGIHTTPConnection.handle_request() running at /home/kolo/Python_Projects/FindlyAPI/venv/lib/python3.11/site-packages/quart/asgi.py:98> cb=[_wait.<locals>._on_completion() at /usr/lib/python3.11/asyncio/tasks.py:509] created at /usr/lib/python3.11/asyncio/tasks.py:670> took 0.196 seconds
+
+
+

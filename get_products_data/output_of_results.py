@@ -8,7 +8,7 @@ from .collecting_primary_data.product_models import (
     MarketPlaceList,
     SortAndFilterProductList,
 )
-from backend.get_products_data.filtering_algorithms import (
+from get_products_data.filtering_algorithms import (
     filter_regular_expression,
     filter_for_category_based_on_price,
 )

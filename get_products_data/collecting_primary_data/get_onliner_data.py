@@ -3,7 +3,7 @@ from typing import Dict
 import httpx
 from httpx import Response
 import json
-from backend.utils.get_config.get_pars_config import GetParsConfig
+from utils.get_config.get_pars_config import GetParsConfig
 from .product_models import ProductData, ProductList
 
 
