@@ -19,9 +19,9 @@ from httpx import RemoteProtocolError, TimeoutException
 
 
 @cached(ttl=5 * 60, serializer=PickleSerializer())
-async def output_of_results(query: str,
-                            max_size: int | None,
-                            only_new: int | None) -> MarketPlaceList:
+async def output_of_results(
+    query: str, max_size: int | None, only_new: int | None
+) -> MarketPlaceList:
     only_new = bool(only_new)
     if max_size in [None, NoneType]:
         max_size = 6
@@ -42,15 +42,13 @@ async def output_of_results(query: str,
         try:
             match func_name:
                 case "Kufar":
-                    pars_data: ProductList = await func(query=query,
-                                                        only_new=only_new)
+                    pars_data: ProductList = await func(query=query, only_new=only_new)
                 case _:
                     pars_data: ProductList = await func(query=query)
         except (RemoteProtocolError, TimeoutException):
             match func_name:
                 case "Kufar":
-                    pars_data: ProductList = await func(query=query,
-                                                        only_new=only_new)
+                    pars_data: ProductList = await func(query=query, only_new=only_new)
                 case _:
                     pars_data: ProductList = await func(query=query)
 
@@ -71,7 +69,7 @@ async def output_of_results(query: str,
         )
 
         if len(result_items) > max_size:
-            result_items: ProductList = ProductList(result_items[:max_size+1])
+            result_items: ProductList = ProductList(result_items[: max_size + 1])
 
         if result_items:
             output_result_items.add_list_of_products(func_name, result_items)

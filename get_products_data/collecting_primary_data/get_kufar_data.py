@@ -7,8 +7,7 @@ from utils.get_config.get_pars_config import GetParsConfig
 from .product_models import ProductData, ProductList
 
 
-async def get_kufar_data(query: str,
-                         only_new: bool) -> ProductList:
+async def get_kufar_data(query: str, only_new: bool) -> ProductList:
     kufar_pars_config: Dict = GetParsConfig.get_kufar_pars_config()
 
     query: str = query.strip()

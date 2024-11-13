@@ -42,48 +42,47 @@ async def unprocessable_content_view(error) -> Response:
 
 @app.route("/api/search", methods=["GET"])
 async def main_view() -> Response | str:
-
     is_allowed: bool = await reject_middleware(request)
     if is_allowed:
-        allowed_args = {'q',
-                        'max_size',
-                        'only_new'}
+        allowed_args = {"q", "ms", "on"}
 
-        q = request.args.get('q')
+        q = request.args.get("q")
         if not q:
             abort(422)
-        max_size = request.args.get('max_size')
-        only_new = request.args.get('only_new')
+        max_size = request.args.get("ms")
+        only_new = request.args.get("on")
         if not isinstance(max_size, NoneType):
             try:
                 map(int, max_size)
-                if not (0 <= int(max_size) <= 21): raise ValueError
+                if not (0 <= int(max_size) <= 21):
+                    raise ValueError
             except ValueError:
                 abort(422)
-        if only_new not in [None, NoneType, '0', '1']: abort(422)
+        if only_new not in [None, NoneType, "0", "1"]:
+            abort(422)
 
         all_args = set(request.args.keys())
         if len(all_args - allowed_args) > 0:
             abort(422)
-        query: str = request.args.get('q').replace("+", " ")
+        query: str = request.args.get("q").replace("+", " ")
 
         try:
-            data: MarketPlaceList = await output_of_results(query=query,
-                                                            max_size=max_size,
-                                                            only_new=only_new)
+            data: MarketPlaceList = await output_of_results(
+                query=query, max_size=max_size, only_new=only_new
+            )
         except (ConnectTimeout, ReadTimeout):
-            data: MarketPlaceList = await output_of_results(query=query,
-                                                            max_size=max_size,
-                                                            only_new=only_new)
+            data: MarketPlaceList = await output_of_results(
+                query=query, max_size=max_size, only_new=only_new
+            )
 
         json_data: Dict = data.get_json()
         content = {"data": json_data}
 
         res = await make_response(content)
 
-        if request.url.startswith('http://127.0.0.1:5000/api/search'):
-            res.headers['Access-Control-Allow-Origin'] = '*'
-        res.headers['Content-Type'] = 'application/json'
+        if request.url.startswith("http://127.0.0.1:5000/api/search"):
+            res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Content-Type"] = "application/json"
         return res
     else:
         await abort(403)
@@ -97,7 +96,7 @@ if __name__ == "__main__":
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s\n\n\n",
     )
 
-    logging.warning("Start Findly...")
-    print("\n\033[1m\033[30m\033[44m {} \033[0m".format("Start Findly..."))
+    logging.warning("Start FindlyAPI...")
+    print("\n\033[1m\033[30m\033[44m {} \033[0m".format("Start FindlyAPI..."))
 
     app.run(debug=DEBUG, host=HOST, port=PORT)
