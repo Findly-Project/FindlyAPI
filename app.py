@@ -1,14 +1,17 @@
-from types import NoneType
 from typing import Dict
 from httpx import ReadTimeout, ConnectTimeout
 from quart import Quart, render_template, request, abort
 from quart.helpers import make_response
 from quart.wrappers import Response
-from get_products_data.collecting_primary_data.product_models import MarketPlaceList
-from get_products_data.output_of_results import output_of_results
+from services.collecting_primary_data.product_models import MarketPlaceList
+from services.output_of_results import output_of_results
 import logging
 from utils.get_config.get_quart_config import GetQuartConfig
-from middleware.reject_middlware import reject_middleware
+from middleware.reject_middleware import reject_middleware
+from middleware.request_args_middleware import (
+    RequestArgsMiddleware,
+    CheckArgsEnum
+)
 
 
 app: Quart = Quart(__name__)
@@ -44,27 +47,16 @@ async def unprocessable_content_view(error) -> Response:
 async def main_view() -> Response | str:
     is_allowed: bool = await reject_middleware(request)
     if is_allowed:
-        allowed_args = {"q", "ms", "on"}
 
-        q = request.args.get("q")
-        if not q:
-            abort(422)
-        max_size = request.args.get("ms")
-        only_new = request.args.get("on")
-        if not isinstance(max_size, NoneType):
-            try:
-                map(int, max_size)
-                if not (0 <= int(max_size) <= 21):
-                    raise ValueError
-            except ValueError:
-                abort(422)
-        if only_new not in [None, NoneType, "0", "1"]:
+        args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
+        is_all_args_are_allowed = args.check_allowed_request_args()
+
+        if not is_all_args_are_allowed:
             abort(422)
 
-        all_args = set(request.args.keys())
-        if len(all_args - allowed_args) > 0:
-            abort(422)
-        query: str = request.args.get("q").replace("+", " ")
+        max_size: int | None = args.check_max_size_arg()
+        only_new: bool | None = args.check_only_new_arg()
+        query: str | False = args.check_query_arg()
 
         try:
             data: MarketPlaceList = await output_of_results(
@@ -74,13 +66,12 @@ async def main_view() -> Response | str:
             data: MarketPlaceList = await output_of_results(
                 query=query, max_size=max_size, only_new=only_new
             )
-
         json_data: Dict = data.get_json()
         content = {"data": json_data}
 
-        res = await make_response(content)
+        res = await make_response(content, 200)
 
-        if request.url.startswith("http://127.0.0.1:5000/api/search"):
+        if request.url.startswith(f"{HOST}:{PORT}/api/search"):
             res.headers["Access-Control-Allow-Origin"] = "*"
         res.headers["Content-Type"] = "application/json"
         return res

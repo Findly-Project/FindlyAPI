@@ -9,7 +9,7 @@ import re
 
 
 async def get_mmg_data(query: str) -> ProductList:
-    mmg_pars_config: Dict[str] = GetParsConfig.get_mmg_pars_config()
+    mmg_pars_config: Dict = GetParsConfig.get_mmg_pars_config()
 
     query: str = query.strip().replace(" ", "+")
     first_part_url: str = mmg_pars_config["first_part_url"]

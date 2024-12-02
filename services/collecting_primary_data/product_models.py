@@ -62,7 +62,7 @@ class MarketPlaceList:
         self.list_of_products[list_name]: ProductList = list_data
 
     def get_json(self) -> Dict:
-        output_json: Dict[str] = {}
+        output_json: Dict = {}
         for marketplace, product_list in self.list_of_products.items():
             items: List = []
             for item in product_list.products:
@@ -76,3 +76,6 @@ class MarketPlaceList:
                 )
             output_json[marketplace] = items
         return output_json
+
+    def __str__(self):
+        return f'MarketPlaceList(list_of_products={self.list_of_products})'

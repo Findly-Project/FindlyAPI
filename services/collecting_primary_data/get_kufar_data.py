@@ -56,5 +56,4 @@ async def get_kufar_data(query: str, only_new: bool) -> ProductList:
             )
             if int(i["price_byn"]):
                 product_list.add_product(item)
-
     return product_list
