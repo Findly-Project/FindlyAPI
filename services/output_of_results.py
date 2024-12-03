@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -22,17 +21,12 @@ from httpx import RemoteProtocolError, TimeoutException
 
 @cached(ttl=5 * 60, serializer=PickleSerializer())
 async def output_of_results(
-    query: str, max_size: int | None, only_new: int | None
+    query: str, max_size: int | None, only_new: bool, enable_filter_by_price: bool
 ) -> MarketPlaceList:
     if max_size in [None, NoneType]:
         max_size = 10
-    elif max_size == '0':
+    elif max_size == 0:
         max_size = 20
-    else:
-        max_size = int(max_size)
-
-    logging.info(f'{query}  |  {max_size}  |  {only_new}')
-    print(f'{query}  |  {max_size}  |  {only_new}')
 
     get_data_functions: Dict[str, query] = {
         "Kufar": get_kufar_data,
@@ -68,7 +62,7 @@ async def output_of_results(
             items_filtered_by_name
         )
 
-        if func_name == "Kufar" and not only_new:
+        if not enable_filter_by_price:
             result_items = items_sorted_by_price
         else:
             result_items: ProductList = filter_for_category_based_on_price.filter_by_price(

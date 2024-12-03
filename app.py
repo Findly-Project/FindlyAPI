@@ -1,3 +1,5 @@
+from datetime import datetime
+from importlib.metadata import metadata
 from typing import Dict
 from httpx import ReadTimeout, ConnectTimeout
 from quart import Quart, render_template, request, abort
@@ -45,38 +47,70 @@ async def unprocessable_content_view(error) -> Response:
 
 @app.route("/api/search", methods=["GET"])
 async def main_view() -> Response | str:
-    is_allowed: bool = await reject_middleware(request)
-    if is_allowed:
-
-        args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
-        is_all_args_are_allowed = args.check_allowed_request_args()
-
-        if not is_all_args_are_allowed:
-            abort(422)
-
-        max_size: int | None = args.check_max_size_arg()
-        only_new: bool | None = args.check_only_new_arg()
-        query: str | False = args.check_query_arg()
-
-        try:
-            data: MarketPlaceList = await output_of_results(
-                query=query, max_size=max_size, only_new=only_new
-            )
-        except (ConnectTimeout, ReadTimeout):
-            data: MarketPlaceList = await output_of_results(
-                query=query, max_size=max_size, only_new=only_new
-            )
-        json_data: Dict = data.get_json()
-        content = {"data": json_data}
-
-        res = await make_response(content, 200)
-
-        if request.url.startswith(f"{HOST}:{PORT}/api/search"):
-            res.headers["Access-Control-Allow-Origin"] = "*"
-        res.headers["Content-Type"] = "application/json"
-        return res
-    else:
+    is_allowed: bool = await reject_middleware(request.remote_addr)
+    if not is_allowed:
         await abort(403)
+
+    args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
+    is_all_args_are_allowed = args.check_allowed_request_args()
+
+    if not is_all_args_are_allowed:
+        await abort(422)
+
+    max_size: int | CheckArgsEnum | False = args.check_max_size_arg()
+    only_new: CheckArgsEnum | False = args.check_only_new_arg()
+    enable_filter_by_price: CheckArgsEnum | False = args.check_enable_filter_by_price_arg()
+    query: str | False = args.check_query_arg()
+
+    clear_args = [max_size, only_new, query, enable_filter_by_price]
+
+    if not all(clear_args):
+        await abort(422)
+
+    if isinstance(max_size, CheckArgsEnum):
+        max_size = max_size.value
+    if isinstance(only_new, CheckArgsEnum):
+        only_new = only_new.value
+    if isinstance(enable_filter_by_price, CheckArgsEnum):
+        enable_filter_by_price = enable_filter_by_price.value
+
+    try:
+        data: MarketPlaceList = await output_of_results(
+            query=query, max_size=max_size, only_new=only_new, enable_filter_by_price=enable_filter_by_price
+        )
+    except (ConnectTimeout, ReadTimeout):
+        data: MarketPlaceList = await output_of_results(
+            query=query, max_size=max_size, only_new=only_new, enable_filter_by_price=enable_filter_by_price
+        )
+    products_data: Dict = data.get_json()
+    request_metadata = {
+                        'date': datetime.now().strftime("%Y-%m-%d"),
+                        'size_of_products':{
+                            'size_of_all_products': sum([len(products_data[x]) for x in products_data]),
+                            'size_of_mmg_products': len(products_data.get('MMG') if products_data.get('MMG') else []),
+                            'size_of_onliner_products': len(products_data.get('Onliner') if products_data.get('Onliner') else []),
+                            'size_of_kufar_products': len(products_data.get('Kufar') if products_data.get('Kufar') else []),
+                            'size_of_21vek_products': len(products_data.get('21vek') if products_data.get('21vek') else [])
+                        },
+                        'request_args':{
+                            'max_size': max_size,
+                            'only_new': only_new,
+                            'query': query,
+                            'enable_filter_by_price': enable_filter_by_price,
+                        },
+                        'request_url': request.url,
+                        }
+
+    content = {"products_data": products_data,
+               "request_metadata": request_metadata}
+
+    res = await make_response(content, 200)
+
+    if request.url.startswith(f"{HOST}:{PORT}/api/search"):
+        res.headers["Access-Control-Allow-Origin"] = "*"
+    res.headers["Content-Type"] = "application/json"
+    return res
+
 
 
 if __name__ == "__main__":
