@@ -1,5 +1,4 @@
 from datetime import datetime
-from importlib.metadata import metadata
 from typing import Dict
 from httpx import ReadTimeout, ConnectTimeout
 from quart import Quart, render_template, request, abort
@@ -28,6 +27,13 @@ PORT: int = int(config["PORT"])
 async def notfound_view(error) -> Response:
     content = await render_template("notfound_page.html")
     res = await make_response(content, 404)
+    return res
+
+
+@app.errorhandler(405)
+async def method_not_allowed_view(error) -> Response:
+    content = await render_template("method_not_allowed_page.html")
+    res = await make_response(content, 405)
     return res
 
 
@@ -60,9 +66,10 @@ async def main_view() -> Response | str:
     max_size: int | CheckArgsEnum | False = args.check_max_size_arg()
     only_new: CheckArgsEnum | False = args.check_only_new_arg()
     enable_filter_by_price: CheckArgsEnum | False = args.check_enable_filter_by_price_arg()
+    enable_filter_by_name: CheckArgsEnum | False = args.check_enable_filter_by_name_arg()
     query: str | False = args.check_query_arg()
 
-    clear_args = [max_size, only_new, query, enable_filter_by_price]
+    clear_args = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name]
 
     if not all(clear_args):
         await abort(422)
@@ -73,33 +80,42 @@ async def main_view() -> Response | str:
         only_new = only_new.value
     if isinstance(enable_filter_by_price, CheckArgsEnum):
         enable_filter_by_price = enable_filter_by_price.value
+    if isinstance(enable_filter_by_name, CheckArgsEnum):
+        enable_filter_by_name = enable_filter_by_name.value
 
     try:
         data: MarketPlaceList = await output_of_results(
-            query=query, max_size=max_size, only_new=only_new, enable_filter_by_price=enable_filter_by_price
+            query=query,
+            max_size=max_size,
+            only_new=only_new,
+            enable_filter_by_price=enable_filter_by_price,
+            enable_filter_by_name = enable_filter_by_name
         )
     except (ConnectTimeout, ReadTimeout):
         data: MarketPlaceList = await output_of_results(
-            query=query, max_size=max_size, only_new=only_new, enable_filter_by_price=enable_filter_by_price
+            query=query,
+            max_size=max_size,
+            only_new=only_new,
+            enable_filter_by_price=enable_filter_by_price,
+            enable_filter_by_name = enable_filter_by_name
         )
     products_data: Dict = data.get_json()
-    request_metadata = {
-                        'date': datetime.now().strftime("%Y-%m-%d"),
+    request_metadata = {'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                         'size_of_products':{
-                            'size_of_all_products': sum([len(products_data[x]) for x in products_data]),
-                            'size_of_mmg_products': len(products_data.get('MMG') if products_data.get('MMG') else []),
-                            'size_of_onliner_products': len(products_data.get('Onliner') if products_data.get('Onliner') else []),
-                            'size_of_kufar_products': len(products_data.get('Kufar') if products_data.get('Kufar') else []),
-                            'size_of_21vek_products': len(products_data.get('21vek') if products_data.get('21vek') else [])
+                            'all': sum([len(products_data[x]) for x in products_data]),
+                            'mmg': len(products_data.get('MMG') if products_data.get('MMG') else []),
+                            'onliner': len(products_data.get('Onliner') if products_data.get('Onliner') else []),
+                            'kufar': len(products_data.get('Kufar') if products_data.get('Kufar') else []),
+                            '21vek': len(products_data.get('21vek') if products_data.get('21vek') else [])
                         },
                         'request_args':{
                             'max_size': max_size,
                             'only_new': only_new,
                             'query': query,
                             'enable_filter_by_price': enable_filter_by_price,
+                            'enable_filter_by_name': enable_filter_by_name
                         },
-                        'request_url': request.url,
-                        }
+                        'request_url': request.url}
 
     content = {"products_data": products_data,
                "request_metadata": request_metadata}

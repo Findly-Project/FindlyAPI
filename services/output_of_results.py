@@ -1,4 +1,3 @@
-import logging
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -21,7 +20,7 @@ from httpx import RemoteProtocolError, TimeoutException
 
 @cached(ttl=5 * 60, serializer=PickleSerializer())
 async def output_of_results(
-    query: str, max_size: int | None, only_new: bool, enable_filter_by_price: bool
+    query: str, max_size: int | None, only_new: bool, enable_filter_by_price: bool, enable_filter_by_name: bool
 ) -> MarketPlaceList:
     if max_size in [None, NoneType]:
         max_size = 10
@@ -50,17 +49,20 @@ async def output_of_results(
                 case _:
                     pars_data: ProductList = await func(query=query)
 
-        product_names: List[str] = [j.name for j in pars_data]
+        if not enable_filter_by_name:
+            items_sorted_by_price: ProductList = pars_data
+        else:
+            product_names: List[str] = [j.name for j in pars_data]
 
-        items_filtered_by_regular_expression: List[str] = (
-            filter_regular_expression.regular_expression(query, product_names)
-        )
-        items_filtered_by_name: ProductList = SortAndFilterProductList.filter_by_name(
-            items_filtered_by_regular_expression, pars_data
-        )
-        items_sorted_by_price: ProductList = SortAndFilterProductList.sort_by_price(
-            items_filtered_by_name
-        )
+            items_filtered_by_regular_expression: List[str] = (
+                filter_regular_expression.regular_expression(query, product_names)
+            )
+            items_filtered_by_name: ProductList = SortAndFilterProductList.filter_by_name(
+                items_filtered_by_regular_expression, pars_data
+            )
+            items_sorted_by_price: ProductList = SortAndFilterProductList.sort_by_price(
+                items_filtered_by_name
+            )
 
         if not enable_filter_by_price:
             result_items = items_sorted_by_price
@@ -69,7 +71,7 @@ async def output_of_results(
                 items_sorted_by_price
             )
         if len(result_items) > max_size:
-            result_items: ProductList = ProductList(result_items[:max_size+1])
+            result_items: ProductList = ProductList(result_items[:max_size])
         if result_items:
             output_result_items.add_list_of_products(func_name, result_items)
 

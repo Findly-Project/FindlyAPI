@@ -13,6 +13,10 @@ class CheckArgsEnum(Enum):
     off_enable_filter_by_price_arg = False
     on_enable_filter_by_price_arg = True
 
+    none_enable_filter_by_name_arg = None
+    off_enable_filter_by_name_arg = False
+    on_enable_filter_by_name_arg = True
+
 
 class RequestArgsMiddleware:
 
@@ -21,7 +25,7 @@ class RequestArgsMiddleware:
 
     def check_allowed_request_args(self):
         all_args = self.args.keys()
-        allowed_args: set[str] = {'q', 'ms', 'on', 'epf'}
+        allowed_args: set[str] = {'q', 'ms', 'on', 'epf', 'enf'}
 
         if len(all_args - allowed_args) > 0:
             return False
@@ -35,7 +39,7 @@ class RequestArgsMiddleware:
         else:
             try:
                 map(int, max_size_arg)
-                if not (0 <= int(max_size_arg) <= 21):
+                if not (0 < int(max_size_arg) <= 20):
                     raise ValueError
             except ValueError:
                 return False
@@ -47,6 +51,7 @@ class RequestArgsMiddleware:
         if only_new_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
+
             match only_new_arg:
                 case "off":
                     only_new = CheckArgsEnum.off_only_new_arg
@@ -69,6 +74,20 @@ class RequestArgsMiddleware:
                 case _:
                     enable_filter_by_price_arg = CheckArgsEnum.on_enable_filter_by_price_arg
             return enable_filter_by_price_arg
+
+    def check_enable_filter_by_name_arg(self) -> bool | CheckArgsEnum:
+        enable_filter_by_name_arg = self.args.get('enf')
+        if enable_filter_by_name_arg not in [None, NoneType, "off", "on"]:
+            return False
+        else:
+            match enable_filter_by_name_arg:
+                case "off":
+                    enable_filter_by_name_arg = CheckArgsEnum.off_enable_filter_by_name_arg
+                case "on":
+                    enable_filter_by_name_arg = CheckArgsEnum.on_enable_filter_by_name_arg
+                case _:
+                    enable_filter_by_name_arg = CheckArgsEnum.on_enable_filter_by_name_arg
+            return enable_filter_by_name_arg
 
     def check_query_arg(self) -> bool | str:
         query_arg = self.args.get('q')
