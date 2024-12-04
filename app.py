@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 from typing import Dict
 from httpx import ReadTimeout, ConnectTimeout
 from quart import Quart, render_template, request, abort
@@ -57,6 +58,7 @@ async def main_view() -> Response | str:
     if not is_allowed:
         await abort(403)
 
+    start_collect_data = time.time()
     args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
     is_all_args_are_allowed = args.check_allowed_request_args()
 
@@ -101,6 +103,7 @@ async def main_view() -> Response | str:
         )
     products_data: Dict = data.get_json()
     request_metadata = {'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                        'response_time': round(time.time() - start_collect_data, 3),
                         'size_of_products':{
                             'all': sum([len(products_data[x]) for x in products_data]),
                             'mmg': len(products_data.get('MMG') if products_data.get('MMG') else []),
