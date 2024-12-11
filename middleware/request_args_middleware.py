@@ -25,7 +25,7 @@ class RequestArgsMiddleware:
 
     def check_allowed_request_args(self):
         all_args = self.args.keys()
-        allowed_args: set[str] = {'q', 'ms', 'on', 'epf', 'enf'}
+        allowed_args: set[str] = {'q', 'ms', 'on', 'epf', 'enf', 'ew'}
 
         if len(all_args - allowed_args) > 0:
             return False
@@ -39,7 +39,7 @@ class RequestArgsMiddleware:
         else:
             try:
                 map(int, max_size_arg)
-                if not (0 < int(max_size_arg) <= 20):
+                if not (0 < int(max_size_arg) <= 40):
                     raise ValueError
             except ValueError:
                 return False
@@ -95,3 +95,10 @@ class RequestArgsMiddleware:
             return False
         else:
             return query_arg.replace('+', ' ')
+
+    def check_exclusion_word_arg(self) -> bool | str:
+        exclusion_word = self.args.get('ew')
+        if exclusion_word is None:
+            return True
+        else:
+            return exclusion_word

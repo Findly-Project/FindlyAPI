@@ -70,8 +70,9 @@ async def main_view() -> Response | str:
     enable_filter_by_price: CheckArgsEnum | False = args.check_enable_filter_by_price_arg()
     enable_filter_by_name: CheckArgsEnum | False = args.check_enable_filter_by_name_arg()
     query: str | False = args.check_query_arg()
+    exclusion_word: str | True = args.check_exclusion_word_arg()
 
-    clear_args = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name]
+    clear_args = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_word]
 
     if not all(clear_args):
         await abort(422)
@@ -91,7 +92,8 @@ async def main_view() -> Response | str:
             max_size=max_size,
             only_new=only_new,
             enable_filter_by_price=enable_filter_by_price,
-            enable_filter_by_name = enable_filter_by_name
+            enable_filter_by_name = enable_filter_by_name,
+            exclusion_word=exclusion_word
         )
     except (ConnectTimeout, ReadTimeout):
         data: MarketPlaceList = await output_of_results(
@@ -99,7 +101,8 @@ async def main_view() -> Response | str:
             max_size=max_size,
             only_new=only_new,
             enable_filter_by_price=enable_filter_by_price,
-            enable_filter_by_name = enable_filter_by_name
+            enable_filter_by_name = enable_filter_by_name,
+            exclusion_word=exclusion_word
         )
     products_data: Dict = data.get_json()
     request_metadata = {'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
@@ -116,7 +119,8 @@ async def main_view() -> Response | str:
                             'only_new': only_new,
                             'query': query,
                             'enable_filter_by_price': enable_filter_by_price,
-                            'enable_filter_by_name': enable_filter_by_name
+                            'enable_filter_by_name': enable_filter_by_name,
+                            'exclusion_word': exclusion_word if isinstance(exclusion_word, str) else None
                         },
                         'request_url': request.url}
 
