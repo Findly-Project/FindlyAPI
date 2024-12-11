@@ -1,7 +1,7 @@
 [Quart]
     [Quart.Settings]
     DEBUG=0
-    HOST="192.168.0.215"
+    HOST="127.0.0.1"
     PORT=5000
 
     [Quart.Security]

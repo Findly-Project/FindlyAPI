@@ -1,16 +1,16 @@
 import re
-from typing import List
+from services.collecting_primary_data.product_models import ProductList
 
 
-def regular_expression(query: str, candidates: List[str]) -> List[str]:
-    clear_candidates: List[str] = []
+def regular_expression(query: str, candidates: ProductList) -> ProductList:
+    clear_candidates: ProductList = ProductList()
 
     for candidate in candidates:
         is_best_result: bool = bool(
-            re.match(rf"^(.*\s)?{query}(\s.*)?$", candidate, re.IGNORECASE)
+            re.match(rf"^(.*\s)?{query}(\s.*)?$", candidate.name, re.IGNORECASE)
         )
 
         if is_best_result:
-            clear_candidates.append(candidate)
+            clear_candidates.add_product(candidate)
 
     return clear_candidates

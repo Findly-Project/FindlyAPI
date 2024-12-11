@@ -101,7 +101,7 @@ async def main_view() -> Response | str:
             max_size=max_size,
             only_new=only_new,
             enable_filter_by_price=enable_filter_by_price,
-            enable_filter_by_name = enable_filter_by_name,
+            enable_filter_by_name=enable_filter_by_name,
             exclusion_word=exclusion_word
         )
     products_data: Dict = data.get_json()

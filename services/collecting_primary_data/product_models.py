@@ -39,14 +39,7 @@ class ProductList:
         return f"ProductList(products={self.products})"
 
 
-class SortAndFilterProductList:
-    @staticmethod
-    def filter_by_name(names: List[str], products: ProductList) -> ProductList:
-        products_list: List[ProductData] = [
-            item for item in products if item.name in names
-        ]
-        return ProductList(products_list)
-
+class SortProductList:
     @staticmethod
     def sort_by_price(products: ProductList) -> ProductList:
         return ProductList(
