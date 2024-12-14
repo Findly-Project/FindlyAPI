@@ -60,17 +60,21 @@ async def main_view() -> Response | str:
 
     start_collect_data = time.time()
     args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
-    is_all_args_are_allowed = args.check_allowed_request_args()
+    is_all_args_are_allowed = args.checking_allowed_request_args()
+    is_all_args_are_compatible = args.checking_overlapping_arguments()
 
     if not is_all_args_are_allowed:
         await abort(422)
 
-    max_size: int | CheckArgsEnum | False = args.check_max_size_arg()
-    only_new: CheckArgsEnum | False = args.check_only_new_arg()
-    enable_filter_by_price: CheckArgsEnum | False = args.check_enable_filter_by_price_arg()
-    enable_filter_by_name: CheckArgsEnum | False = args.check_enable_filter_by_name_arg()
-    query: str | False = args.check_query_arg()
-    exclusion_word: str | True = args.check_exclusion_word_arg()
+    if not is_all_args_are_compatible:
+        await abort(422)
+
+    max_size: int | CheckArgsEnum | False = args.checking_max_size_arg()
+    only_new: CheckArgsEnum | False = args.checking_only_new_arg()
+    enable_filter_by_price: CheckArgsEnum | False = args.checking_enable_filter_by_price_arg()
+    enable_filter_by_name: CheckArgsEnum | False = args.checking_enable_filter_by_name_arg()
+    query: str | False = args.checking_query_arg()
+    exclusion_word: str | True = args.checking_exclusion_word_arg()
 
     clear_args = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_word]
 

@@ -51,28 +51,29 @@ async def output_of_results(
         else:
             items_filtered_by_exclusion_word: ProductList = pars_data
 
+        if not enable_filter_by_price:
+            result_items = items_filtered_by_exclusion_word
+        else:
+            result_items: ProductList = (
+                filter_for_category_based_on_price.filter_by_price(
+                    items_filtered_by_exclusion_word
+                )
+            )
+
         if not enable_filter_by_name:
-            items_sorted_by_price: ProductList = items_filtered_by_exclusion_word
+            items_sorted_by_price: ProductList = result_items
         else:
             items_filtered_by_regular_expression: ProductList = (
-                filter_regular_expression.regular_expression(query, items_filtered_by_exclusion_word)
+                filter_regular_expression.regular_expression(query, result_items)
             )
             items_sorted_by_price: ProductList = SortProductList.sort_by_price(
                 items_filtered_by_regular_expression
             )
-
-        if not enable_filter_by_price:
-            result_items = items_sorted_by_price
-        else:
-            result_items: ProductList = (
-                filter_for_category_based_on_price.filter_by_price(
-                    items_sorted_by_price
-                )
-            )
+            
         if len(result_items) > max_size:
-            result_items: ProductList = ProductList(result_items[:max_size])
+            result_items: ProductList = ProductList(items_sorted_by_price[:max_size])
         if result_items:
-            output_result_items.add_list_of_products(func_name, result_items)
+            output_result_items.add_list_of_products(func_name, items_sorted_by_price)
 
     return output_result_items
 

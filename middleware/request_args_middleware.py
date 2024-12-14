@@ -23,7 +23,7 @@ class RequestArgsMiddleware:
     def __init__(self, args: ImmutableMultiDict[str, str] | MultiDict[str, str]):
         self.args: ImmutableMultiDict[str, str] | MultiDict[str, str] = args
 
-    def check_allowed_request_args(self):
+    def checking_allowed_request_args(self):
         all_args = self.args.keys()
         allowed_args: set[str] = {'q', 'ms', 'on', 'epf', 'enf', 'ew'}
 
@@ -32,7 +32,18 @@ class RequestArgsMiddleware:
         else:
             return True
 
-    def check_max_size_arg(self) -> CheckArgsEnum | int:
+    def checking_overlapping_arguments(self) -> bool:
+        enable_name_filter = self.args.get('enf')
+        query = self.args.get('q')
+        exclusion_word = self.args.get('ew')
+
+        if (exclusion_word.strip().lower() in [x.lower() for x in query.split()]
+                and enable_name_filter in [None, NoneType, 'on']):
+            return False
+        else:
+            return True
+
+    def checking_max_size_arg(self) -> CheckArgsEnum | int:
         max_size_arg = self.args.get('ms')
         if max_size_arg in [NoneType, None]:
             return CheckArgsEnum.none_max_size_arg
@@ -46,7 +57,7 @@ class RequestArgsMiddleware:
             else:
                 return int(max_size_arg)
 
-    def check_only_new_arg(self) -> bool | CheckArgsEnum:
+    def checking_only_new_arg(self) -> bool | CheckArgsEnum:
         only_new_arg = self.args.get('on')
         if only_new_arg not in [None, NoneType, "off", "on"]:
             return False
@@ -61,7 +72,7 @@ class RequestArgsMiddleware:
                     only_new = CheckArgsEnum.on_only_new_arg
             return only_new
 
-    def check_enable_filter_by_price_arg(self) -> bool | CheckArgsEnum:
+    def checking_enable_filter_by_price_arg(self) -> bool | CheckArgsEnum:
         enable_filter_by_price_arg = self.args.get('epf')
         if enable_filter_by_price_arg not in [None, NoneType, "off", "on"]:
             return False
@@ -75,7 +86,7 @@ class RequestArgsMiddleware:
                     enable_filter_by_price_arg = CheckArgsEnum.on_enable_filter_by_price_arg
             return enable_filter_by_price_arg
 
-    def check_enable_filter_by_name_arg(self) -> bool | CheckArgsEnum:
+    def checking_enable_filter_by_name_arg(self) -> bool | CheckArgsEnum:
         enable_filter_by_name_arg = self.args.get('enf')
         if enable_filter_by_name_arg not in [None, NoneType, "off", "on"]:
             return False
@@ -89,14 +100,14 @@ class RequestArgsMiddleware:
                     enable_filter_by_name_arg = CheckArgsEnum.on_enable_filter_by_name_arg
             return enable_filter_by_name_arg
 
-    def check_query_arg(self) -> bool | str:
+    def checking_query_arg(self) -> bool | str:
         query_arg = self.args.get('q')
         if query_arg is None:
             return False
         else:
             return query_arg.replace('+', ' ')
 
-    def check_exclusion_word_arg(self) -> bool | str:
+    def checking_exclusion_word_arg(self) -> bool | str:
         exclusion_word = self.args.get('ew')
         if exclusion_word is None:
             return True
