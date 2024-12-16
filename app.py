@@ -2,7 +2,7 @@ from datetime import datetime
 import time
 from typing import Dict
 from httpx import ReadTimeout, ConnectTimeout
-from quart import Quart, render_template, request, abort
+from quart import Quart, render_template, request, abort, jsonify
 from quart.helpers import make_response
 from quart.wrappers import Response
 from services.collecting_primary_data.product_models import MarketPlaceList
@@ -26,28 +26,52 @@ PORT: int = int(config["PORT"])
 
 @app.errorhandler(404)
 async def notfound_view(error) -> Response:
-    content = await render_template("notfound_page.html")
+    content = jsonify({'code': 404,
+                       'default_error': str(error),
+                       'pretty_error': 'Page not found, check the path is correct',
+                       'request_metadata': {
+                           'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                           'request_url': request.url}
+                       })
     res = await make_response(content, 404)
     return res
 
 
 @app.errorhandler(405)
 async def method_not_allowed_view(error) -> Response:
-    content = await render_template("method_not_allowed_page.html")
+    content = jsonify({'code': 405,
+                       'default_error': str(error),
+                       'pretty_error': 'Request method not allowed',
+                       'request_metadata': {
+                           'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                           'request_url': request.url}
+                       })
     res = await make_response(content, 405)
     return res
 
 
 @app.errorhandler(403)
 async def unauthorized_view(error) -> Response:
-    content = await render_template("unauthorized_page.html")
+    content = jsonify({'code': 403,
+                       'default_error': str(error),
+                       'pretty_error': 'Access to API is denied',
+                       'request_metadata': {
+                           'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                           'request_url': request.url}
+                       })
     res = await make_response(content, 403)
     return res
 
 
 @app.errorhandler(422)
 async def unprocessable_content_view(error) -> Response:
-    content = await render_template("unprocessable_content_page.html")
+    content = jsonify({'code': 422,
+                       'default_error': str(error),
+                       'pretty_error': 'Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md',
+                       'request_metadata': {
+                            'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                            'request_url': request.url}
+                       })
     res = await make_response(content, 422)
     return res
 
@@ -90,23 +114,22 @@ async def main_view() -> Response | str:
     if isinstance(enable_filter_by_name, CheckArgsEnum):
         enable_filter_by_name = enable_filter_by_name.value
 
+    kwargs = {
+        'query': query,
+        'max_size': max_size,
+        'only_new': only_new,
+        'enable_filter_by_price': enable_filter_by_price,
+        'enable_filter_by_name': enable_filter_by_name,
+        'exclusion_word': exclusion_word
+    }
+
     try:
         data: MarketPlaceList = await output_of_results(
-            query=query,
-            max_size=max_size,
-            only_new=only_new,
-            enable_filter_by_price=enable_filter_by_price,
-            enable_filter_by_name = enable_filter_by_name,
-            exclusion_word=exclusion_word
+            **kwargs
         )
     except (ConnectTimeout, ReadTimeout):
         data: MarketPlaceList = await output_of_results(
-            query=query,
-            max_size=max_size,
-            only_new=only_new,
-            enable_filter_by_price=enable_filter_by_price,
-            enable_filter_by_name=enable_filter_by_name,
-            exclusion_word=exclusion_word
+            **kwargs
         )
     products_data: Dict = data.get_json()
     request_metadata = {'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),

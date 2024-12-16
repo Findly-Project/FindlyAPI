@@ -14,6 +14,7 @@ async def get_21vek_data(query: str) -> ProductList:
 
     query: str = query.strip()
     url: str = _21vek_pars_config["main_api_url"].format(query=query)
+    print(url)
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         data: Response = await client.get(url)
@@ -26,7 +27,8 @@ async def get_21vek_data(query: str) -> ProductList:
     for i in data:
         try:
             price: str = i.find("span", class_="j-item-data").text
-            price: float = float(re.sub(r" ", "", re.sub(r",", ".", price.rstrip("0"))))
+            price: str = price.rstrip("0").replace(r",", ".")
+            price: float = float(price.replace(r" ", ""))
 
             item: ProductData = ProductData(
                 link=i.find("a", class_="j-ga_track")["href"],

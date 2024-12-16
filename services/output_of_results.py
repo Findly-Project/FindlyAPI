@@ -61,7 +61,10 @@ async def output_of_results(
             )
 
         if not enable_filter_by_name:
-            items_sorted_by_price: ProductList = result_items
+            items_sorted_by_price: ProductList = SortProductList.sort_by_price(
+                result_items
+            )
+
         else:
             items_filtered_by_regular_expression: ProductList = (
                 filter_regular_expression.regular_expression(query, result_items)

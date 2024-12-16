@@ -13,7 +13,7 @@ class ProductData:
         self.price: float = price
 
     def __repr__(self) -> str:
-        return f"ProductData(name={self.name}, price={self.price}, link={self.link})"
+        return f"ProductData(name={self.name}, price={self.price}, link={self.link}, image={self.image})"
 
 
 class ProductList:

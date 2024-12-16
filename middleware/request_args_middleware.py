@@ -33,23 +33,24 @@ class RequestArgsMiddleware:
             return True
 
     def checking_overlapping_arguments(self) -> bool:
-        enable_name_filter = self.args.get('enf')
-        query = self.args.get('q')
-        exclusion_word = self.args.get('ew')
+        enable_name_filter: NoneType | str = self.args.get('enf')
+        query: None | str = self.args.get('q')
+        exclusion_word: None | str = self.args.get('ew')
 
-        if (exclusion_word.strip().lower() in [x.lower() for x in query.split()]
-                and enable_name_filter in [None, NoneType, 'on']):
-            return False
-        else:
-            return True
+        if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_word, query]):
+            if exclusion_word.strip().lower() in [x.lower() for x in query.split()]:
+                return False
+            else:
+                return True
+        return True
 
     def checking_max_size_arg(self) -> CheckArgsEnum | int:
-        max_size_arg = self.args.get('ms')
+        max_size_arg: None | int = self.args.get('ms')
         if max_size_arg in [NoneType, None]:
             return CheckArgsEnum.none_max_size_arg
         else:
             try:
-                map(int, max_size_arg)
+                map(int, [max_size_arg])
                 if not (0 < int(max_size_arg) <= 40):
                     raise ValueError
             except ValueError:
@@ -58,57 +59,57 @@ class RequestArgsMiddleware:
                 return int(max_size_arg)
 
     def checking_only_new_arg(self) -> bool | CheckArgsEnum:
-        only_new_arg = self.args.get('on')
+        only_new_arg: None | str = self.args.get('on')
         if only_new_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
 
             match only_new_arg:
                 case "off":
-                    only_new = CheckArgsEnum.off_only_new_arg
+                    only_new: CheckArgsEnum = CheckArgsEnum.off_only_new_arg
                 case "on":
-                    only_new = CheckArgsEnum.on_only_new_arg
+                    only_new: CheckArgsEnum = CheckArgsEnum.on_only_new_arg
                 case _:
-                    only_new = CheckArgsEnum.on_only_new_arg
+                    only_new: CheckArgsEnum = CheckArgsEnum.on_only_new_arg
             return only_new
 
     def checking_enable_filter_by_price_arg(self) -> bool | CheckArgsEnum:
-        enable_filter_by_price_arg = self.args.get('epf')
+        enable_filter_by_price_arg: None | str | CheckArgsEnum = self.args.get('epf')
         if enable_filter_by_price_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
             match enable_filter_by_price_arg:
                 case "off":
-                    enable_filter_by_price_arg = CheckArgsEnum.off_enable_filter_by_price_arg
+                    enable_filter_by_price_arg: CheckArgsEnum = CheckArgsEnum.off_enable_filter_by_price_arg
                 case "on":
-                    enable_filter_by_price_arg = CheckArgsEnum.on_enable_filter_by_price_arg
+                    enable_filter_by_price_arg: CheckArgsEnum = CheckArgsEnum.on_enable_filter_by_price_arg
                 case _:
-                    enable_filter_by_price_arg = CheckArgsEnum.on_enable_filter_by_price_arg
+                    enable_filter_by_price_arg: CheckArgsEnum = CheckArgsEnum.on_enable_filter_by_price_arg
             return enable_filter_by_price_arg
 
     def checking_enable_filter_by_name_arg(self) -> bool | CheckArgsEnum:
-        enable_filter_by_name_arg = self.args.get('enf')
+        enable_filter_by_name_arg: None | str | CheckArgsEnum = self.args.get('enf')
         if enable_filter_by_name_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
             match enable_filter_by_name_arg:
                 case "off":
-                    enable_filter_by_name_arg = CheckArgsEnum.off_enable_filter_by_name_arg
+                    enable_filter_by_name_arg: CheckArgsEnum = CheckArgsEnum.off_enable_filter_by_name_arg
                 case "on":
-                    enable_filter_by_name_arg = CheckArgsEnum.on_enable_filter_by_name_arg
+                    enable_filter_by_name_arg: CheckArgsEnum = CheckArgsEnum.on_enable_filter_by_name_arg
                 case _:
-                    enable_filter_by_name_arg = CheckArgsEnum.on_enable_filter_by_name_arg
+                    enable_filter_by_name_arg: CheckArgsEnum = CheckArgsEnum.on_enable_filter_by_name_arg
             return enable_filter_by_name_arg
 
     def checking_query_arg(self) -> bool | str:
-        query_arg = self.args.get('q')
+        query_arg: None | str = self.args.get('q')
         if query_arg is None:
             return False
         else:
             return query_arg.replace('+', ' ')
 
     def checking_exclusion_word_arg(self) -> bool | str:
-        exclusion_word = self.args.get('ew')
+        exclusion_word: None | str = self.args.get('ew')
         if exclusion_word is None:
             return True
         else:
