@@ -149,7 +149,8 @@ async def main_view() -> Response | str:
                             'enable_filter_by_name': enable_filter_by_name,
                             'exclusion_word': exclusion_word if isinstance(exclusion_word, str) else None
                         },
-                        'request_url': request.url}
+                        'request_url': request.url,
+                        'code': 200}
 
     content = {"products_data": products_data,
                "request_metadata": request_metadata}
