@@ -1,5 +1,4 @@
 import logging
-from typing import Dict
 import httpx
 from httpx import Response
 import json
@@ -8,7 +7,7 @@ from .product_models import ProductData, ProductList
 
 
 async def get_onliner_data(query: str) -> ProductList:
-    onliner_pars_data: Dict = GetParsConfig.get_onliner_pars_config()
+    onliner_pars_data: dict = GetParsConfig.get_onliner_pars_config()
     product_list: ProductList = ProductList()
     query: str = query.strip().replace(" ", "+")
 
@@ -18,7 +17,7 @@ async def get_onliner_data(query: str) -> ProductList:
         async with httpx.AsyncClient(timeout=10.0) as client:
             data: Response = await client.get(url)
 
-        data: Dict = json.loads(data.text)
+        data: dict = json.loads(data.text)
 
         for i in data["products"]:
             try:

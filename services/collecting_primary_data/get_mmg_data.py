@@ -1,4 +1,3 @@
-from typing import List, Dict
 import httpx
 from httpx import Response
 from bs4 import BeautifulSoup
@@ -9,7 +8,7 @@ import re
 
 
 async def get_mmg_data(query: str) -> ProductList:
-    mmg_pars_config: Dict = GetParsConfig.get_mmg_pars_config()
+    mmg_pars_config: dict = GetParsConfig.get_mmg_pars_config()
 
     query: str = query.strip().replace(" ", "+")
     first_part_url: str = mmg_pars_config["first_part_url"]
@@ -19,7 +18,7 @@ async def get_mmg_data(query: str) -> ProductList:
         data: Response = await client.get(url)
 
     soup: BeautifulSoup = BeautifulSoup(data.text, "html.parser")
-    data_soup: List = soup.find_all("div", class_="item")
+    data_soup: list = soup.find_all("div", class_="item")
 
     product_list: ProductList = ProductList()
 

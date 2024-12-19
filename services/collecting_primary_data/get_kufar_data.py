@@ -1,4 +1,3 @@
-from typing import Dict, Any
 import httpx
 from httpx import Response
 import json
@@ -7,7 +6,7 @@ from .product_models import ProductData, ProductList
 
 
 async def get_kufar_data(query: str, only_new: bool) -> ProductList:
-    kufar_pars_config: Dict = GetParsConfig.get_kufar_pars_config()
+    kufar_pars_config: dict = GetParsConfig.get_kufar_pars_config()
 
     query: str = query.strip()
     if only_new:
@@ -16,10 +15,10 @@ async def get_kufar_data(query: str, only_new: bool) -> ProductList:
         url: str = kufar_pars_config["pars_url_any"].format(query=query)
     first_part_image_url: str = kufar_pars_config["first_part_image_url"]
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=20.0) as client:
         data: Response = await client.get(url)
 
-    data: Dict[Any] = json.loads(data.text)
+    data: dict = json.loads(data.text)
     product_list: ProductList = ProductList()
 
     for i in data["ads"]:

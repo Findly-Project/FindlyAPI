@@ -1,20 +1,17 @@
-from typing import Dict
 import httpx
 from httpx import Response
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-import re
 import logging
 from utils.get_config.get_pars_config import GetParsConfig
 from .product_models import ProductData, ProductList
 
 
 async def get_21vek_data(query: str) -> ProductList:
-    _21vek_pars_config: Dict = GetParsConfig.get_21vek_pars_config()
+    _21vek_pars_config: dict = GetParsConfig.get_21vek_pars_config()
 
     query: str = query.strip()
     url: str = _21vek_pars_config["main_api_url"].format(query=query)
-    print(url)
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         data: Response = await client.get(url)

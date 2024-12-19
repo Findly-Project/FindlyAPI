@@ -1,8 +1,6 @@
 from datetime import datetime
 import time
-from typing import Dict
-from httpx import ReadTimeout, ConnectTimeout
-from quart import Quart, render_template, request, abort, jsonify
+from quart import Quart, request, abort, jsonify
 from quart.helpers import make_response
 from quart.wrappers import Response
 from services.collecting_primary_data.product_models import MarketPlaceList
@@ -17,7 +15,7 @@ from middleware.request_args_middleware import (
 
 
 app: Quart = Quart(__name__)
-config: Dict = GetQuartConfig.quart_settings()
+config: dict = GetQuartConfig.quart_settings()
 
 DEBUG: bool = bool(int(config["DEBUG"]))
 HOST: str = config["HOST"]
@@ -26,53 +24,53 @@ PORT: int = int(config["PORT"])
 
 @app.errorhandler(404)
 async def notfound_view(error) -> Response:
-    content = jsonify({'code': 404,
+    content: Response = jsonify({'response_code': 404,
                        'default_error': str(error),
                        'pretty_error': 'Page not found, check the path is correct',
                        'request_metadata': {
                            'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                            'request_url': request.url}
                        })
-    res = await make_response(content, 404)
+    res: Response = await make_response(content, 404)
     return res
 
 
 @app.errorhandler(405)
 async def method_not_allowed_view(error) -> Response:
-    content = jsonify({'code': 405,
+    content: Response = jsonify({'response_code': 405,
                        'default_error': str(error),
                        'pretty_error': 'Request method not allowed',
                        'request_metadata': {
                            'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                            'request_url': request.url}
                        })
-    res = await make_response(content, 405)
+    res: Response = await make_response(content, 405)
     return res
 
 
 @app.errorhandler(403)
 async def unauthorized_view(error) -> Response:
-    content = jsonify({'code': 403,
+    content: Response = jsonify({'response_code': 403,
                        'default_error': str(error),
                        'pretty_error': 'Access to API is denied',
                        'request_metadata': {
                            'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                            'request_url': request.url}
                        })
-    res = await make_response(content, 403)
+    res: Response = await make_response(content, 403)
     return res
 
 
 @app.errorhandler(422)
 async def unprocessable_content_view(error) -> Response:
-    content = jsonify({'code': 422,
+    content: Response = jsonify({'response_code': 422,
                        'default_error': str(error),
                        'pretty_error': 'Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md',
                        'request_metadata': {
                             'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                             'request_url': request.url}
                        })
-    res = await make_response(content, 422)
+    res: Response = await make_response(content, 422)
     return res
 
 
@@ -82,10 +80,10 @@ async def main_view() -> Response | str:
     if not is_allowed:
         await abort(403)
 
-    start_collect_data = time.time()
+    start_collect_data: float = time.time()
     args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
-    is_all_args_are_allowed = args.checking_allowed_request_args()
-    is_all_args_are_compatible = args.checking_overlapping_arguments()
+    is_all_args_are_allowed: bool = args.checking_allowed_request_args()
+    is_all_args_are_compatible: bool = args.checking_overlapping_arguments()
 
     if not is_all_args_are_allowed:
         await abort(422)
@@ -100,21 +98,21 @@ async def main_view() -> Response | str:
     query: str | False = args.checking_query_arg()
     exclusion_word: str | True = args.checking_exclusion_word_arg()
 
-    clear_args = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_word]
+    clear_args: list[bool] = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_word]
 
     if not all(clear_args):
         await abort(422)
 
     if isinstance(max_size, CheckArgsEnum):
-        max_size = max_size.value
+        max_size: int = max_size.value
     if isinstance(only_new, CheckArgsEnum):
-        only_new = only_new.value
+        only_new: bool = only_new.value
     if isinstance(enable_filter_by_price, CheckArgsEnum):
-        enable_filter_by_price = enable_filter_by_price.value
+        enable_filter_by_price: bool = enable_filter_by_price.value
     if isinstance(enable_filter_by_name, CheckArgsEnum):
-        enable_filter_by_name = enable_filter_by_name.value
+        enable_filter_by_name: bool = enable_filter_by_name.value
 
-    kwargs = {
+    kwargs: dict[str, str | bool | int] = {
         'query': query,
         'max_size': max_size,
         'only_new': only_new,
@@ -122,16 +120,11 @@ async def main_view() -> Response | str:
         'enable_filter_by_name': enable_filter_by_name,
         'exclusion_word': exclusion_word
     }
+    data: MarketPlaceList = await output_of_results(
+        **kwargs
+    )
 
-    try:
-        data: MarketPlaceList = await output_of_results(
-            **kwargs
-        )
-    except (ConnectTimeout, ReadTimeout):
-        data: MarketPlaceList = await output_of_results(
-            **kwargs
-        )
-    products_data: Dict = data.get_json()
+    products_data: dict = data.get_json()
     request_metadata = {'date': datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
                         'response_time': round(time.time() - start_collect_data, 3),
                         'size_of_products':{
@@ -149,12 +142,13 @@ async def main_view() -> Response | str:
                             'enable_filter_by_name': enable_filter_by_name,
                             'exclusion_word': exclusion_word if isinstance(exclusion_word, str) else None
                         },
-                        'request_url': request.url}
+                        'request_url': request.url,
+                        'response_code': 200}
 
-    content = {"products_data": products_data,
-               "request_metadata": request_metadata}
+    content: dict[str, dict] = {"products_data": products_data,
+                                "request_metadata": request_metadata}
 
-    res = await make_response(content, 200)
+    res: Response = await make_response(content, 200)
 
     if request.url.startswith(f"{HOST}:{PORT}/api/search"):
         res.headers["Access-Control-Allow-Origin"] = "*"

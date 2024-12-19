@@ -1,3 +1,4 @@
+from pprint import pprint
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -28,9 +29,9 @@ async def output_of_results(
     exclusion_word: str | bool,
 ) -> MarketPlaceList:
     if max_size in [None, NoneType]:
-        max_size = 10
+        max_size: int = 10
     elif max_size == 0:
-        max_size = 40
+        max_size: int = 40
 
     get_data_functions: dict[str, query] = {
         "Kufar": get_kufar_data,
@@ -42,7 +43,7 @@ async def output_of_results(
 
     for func_name, func in get_data_functions.items():
 
-        pars_data = await get_data_from_func(func_name, query, only_new, func)
+        pars_data: ProductList = await get_data_from_func(func_name, query, only_new, func)
 
         if isinstance(exclusion_word, str):
             items_filtered_by_exclusion_word: ProductList = (
@@ -50,15 +51,18 @@ async def output_of_results(
             )
         else:
             items_filtered_by_exclusion_word: ProductList = pars_data
-
+        pprint(items_filtered_by_exclusion_word.products)
         if not enable_filter_by_price:
             result_items = items_filtered_by_exclusion_word
+            print('disable')
         else:
+            print('enable')
             result_items: ProductList = (
                 filter_for_category_based_on_price.filter_by_price(
                     items_filtered_by_exclusion_word
                 )
             )
+        pprint(result_items.products)
 
         if not enable_filter_by_name:
             items_sorted_by_price: ProductList = SortProductList.sort_by_price(

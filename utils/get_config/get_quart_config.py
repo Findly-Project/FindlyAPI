@@ -1,18 +1,17 @@
 import tomllib
-from typing import Dict
 
 
 class GetQuartConfig:
     @staticmethod
-    def quart_settings() -> Dict:
+    def quart_settings() -> dict[str]:
         with open("secret_data/config.toml", "rb") as config:
-            quart_settings: Dict[str] = tomllib.load(config)["Quart"]["Settings"]
+            quart_settings: dict[str] = tomllib.load(config)["Quart"]["Settings"]
 
         return quart_settings
 
     @staticmethod
-    def quart_security() -> Dict:
+    def quart_security() -> dict[str]:
         with open("secret_data/config.toml", "rb") as config:
-            quart_security: Dict[str] = tomllib.load(config)["Quart"]["Security"]
+            quart_security: dict[str] = tomllib.load(config)["Quart"]["Security"]
 
         return quart_security

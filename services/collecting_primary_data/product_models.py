@@ -1,6 +1,3 @@
-from typing import List, Any, Dict
-
-
 class ProductData:
     default_image_url: str = "images/placeholder.png"
 
@@ -17,8 +14,8 @@ class ProductData:
 
 
 class ProductList:
-    def __init__(self, products: List[ProductData] | None = None) -> None:
-        self.products: List[ProductData] = products if products else []
+    def __init__(self, products: list[ProductData] | None = None) -> None:
+        self.products: list[ProductData] = products if products else []
 
     def add_product(self, product: ProductData) -> None:
         self.products.append(product)
@@ -32,7 +29,7 @@ class ProductList:
     def __len__(self) -> int:
         return len(self.products)
 
-    def __getitem__(self, item) -> Any:
+    def __getitem__(self, item):
         return self.products[item]
 
     def __repr__(self) -> str:
@@ -49,15 +46,15 @@ class SortProductList:
 
 class MarketPlaceList:
     def __init__(self) -> None:
-        self.list_of_products: Dict = {}
+        self.list_of_products: dict = {}
 
     def add_list_of_products(self, list_name: str, list_data: ProductList) -> None:
         self.list_of_products[list_name]: ProductList = list_data
 
-    def get_json(self) -> Dict:
-        output_json: Dict = {}
+    def get_json(self) -> dict:
+        output_json: dict = {}
         for marketplace, product_list in self.list_of_products.items():
-            items: List = []
+            items: list = []
             for item in product_list.products:
                 items.append(
                     {
@@ -67,7 +64,7 @@ class MarketPlaceList:
                         "price": item.price,
                     }
                 )
-            output_json[marketplace] = items
+            output_json[marketplace]: dict[str] = items
         return output_json
 
     def __str__(self):
