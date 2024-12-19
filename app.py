@@ -96,9 +96,9 @@ async def main_view() -> Response | str:
     enable_filter_by_price: CheckArgsEnum | False = args.checking_enable_filter_by_price_arg()
     enable_filter_by_name: CheckArgsEnum | False = args.checking_enable_filter_by_name_arg()
     query: str | False = args.checking_query_arg()
-    exclusion_word: str | True = args.checking_exclusion_word_arg()
+    exclusion_words: str | True = args.checking_exclusion_words_arg()
 
-    clear_args: list[bool] = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_word]
+    clear_args: list[bool] = [max_size, only_new, query, enable_filter_by_price, enable_filter_by_name, exclusion_words]
 
     if not all(clear_args):
         await abort(422)
@@ -118,7 +118,7 @@ async def main_view() -> Response | str:
         'only_new': only_new,
         'enable_filter_by_price': enable_filter_by_price,
         'enable_filter_by_name': enable_filter_by_name,
-        'exclusion_word': exclusion_word
+        'exclusion_words': exclusion_words
     }
     data: MarketPlaceList = await output_of_results(
         **kwargs
@@ -140,7 +140,7 @@ async def main_view() -> Response | str:
                             'query': query,
                             'enable_filter_by_price': enable_filter_by_price,
                             'enable_filter_by_name': enable_filter_by_name,
-                            'exclusion_word': exclusion_word if isinstance(exclusion_word, str) else None
+                            'exclusion_word': exclusion_words if isinstance(exclusion_words, list) else None
                         },
                         'request_url': request.url,
                         'response_code': 200}

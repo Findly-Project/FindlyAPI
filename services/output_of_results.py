@@ -1,4 +1,3 @@
-from pprint import pprint
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -26,7 +25,7 @@ async def output_of_results(
     only_new: bool,
     enable_filter_by_price: bool,
     enable_filter_by_name: bool,
-    exclusion_word: str | bool,
+    exclusion_words: list | bool,
 ) -> MarketPlaceList:
     if max_size in [None, NoneType]:
         max_size: int = 10
@@ -45,30 +44,25 @@ async def output_of_results(
 
         pars_data: ProductList = await get_data_from_func(func_name, query, only_new, func)
 
-        if isinstance(exclusion_word, str):
+        if isinstance(exclusion_words, list):
             items_filtered_by_exclusion_word: ProductList = (
-                filter_by_exclusion_word.filter_by_exclusion_word(exclusion_word, pars_data)
+                filter_by_exclusion_word.filter_by_exclusion_words(exclusion_words, pars_data)
             )
         else:
             items_filtered_by_exclusion_word: ProductList = pars_data
-        pprint(items_filtered_by_exclusion_word.products)
         if not enable_filter_by_price:
             result_items = items_filtered_by_exclusion_word
-            print('disable')
         else:
-            print('enable')
             result_items: ProductList = (
                 filter_for_category_based_on_price.filter_by_price(
                     items_filtered_by_exclusion_word
                 )
             )
-        pprint(result_items.products)
 
         if not enable_filter_by_name:
             items_sorted_by_price: ProductList = SortProductList.sort_by_price(
                 result_items
             )
-
         else:
             items_filtered_by_regular_expression: ProductList = (
                 filter_regular_expression.regular_expression(query, result_items)
@@ -78,7 +72,7 @@ async def output_of_results(
             )
             
         if len(result_items) > max_size:
-            result_items: ProductList = ProductList(items_sorted_by_price[:max_size])
+            items_sorted_by_price: ProductList = ProductList(items_sorted_by_price[:max_size])
         if result_items:
             output_result_items.add_list_of_products(func_name, items_sorted_by_price)
 

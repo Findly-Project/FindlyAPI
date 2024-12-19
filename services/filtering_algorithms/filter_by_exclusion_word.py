@@ -1,12 +1,13 @@
 from services.collecting_primary_data.product_models import ProductList
 
 
-def filter_by_exclusion_word(exclusion_word: str, candidates: ProductList) -> ProductList:
+def filter_by_exclusion_words(exclusion_words: list[str], candidates: ProductList) -> ProductList:
     clear_candidates: ProductList = ProductList()
+    exclusion_words = set([x.lower().strip() for x in exclusion_words])
 
     for candidate in candidates:
-        list_of_word: list[str] = [x.lower() for x in candidate.name.split()]
-        if exclusion_word.lower().strip() in list_of_word:
+        list_of_word: set[str] = set([x.lower() for x in candidate.name.split()])
+        if len(list_of_word.intersection(exclusion_words)) > 0:
             continue
         else:
             clear_candidates.add_product(candidate)

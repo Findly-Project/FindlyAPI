@@ -1,19 +1,22 @@
-from ..collecting_primary_data.product_models import ProductList
+from ..collecting_primary_data.product_models import ProductList, ProductData, SortProductList
 
 
 def filter_by_price(candidates: ProductList) -> ProductList:
-    if len(candidates) > 1:
+    items_sorted_by_price: ProductList = SortProductList.sort_by_price(
+        candidates
+    )
+    if len(items_sorted_by_price) > 1:
         while True:
             is_filter: bool = True
-            for i in range(len(candidates) - 1):
+            for i in range(len(items_sorted_by_price) - 1):
                 try:
-                    if candidates[i + 1].price / candidates[i].price > 2:
-                        candidates.del_product(i)
+                    if items_sorted_by_price[i + 1].price / items_sorted_by_price[i].price > 2:
+                        items_sorted_by_price.del_product(i)
                         is_filter: bool = False
                 except IndexError:
                     continue
 
             if is_filter:
-                return candidates
+                return items_sorted_by_price
     else:
-        return candidates
+        return items_sorted_by_price

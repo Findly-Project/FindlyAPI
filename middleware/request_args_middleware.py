@@ -108,9 +108,10 @@ class RequestArgsMiddleware:
         else:
             return query_arg.replace('+', ' ')
 
-    def checking_exclusion_word_arg(self) -> bool | str:
-        exclusion_word: None | str = self.args.get('ew')
-        if exclusion_word is None:
+    def checking_exclusion_words_arg(self) -> bool | list[str]:
+        exclusion_words: None | str = self.args.get('ew')
+        if exclusion_words is None:
             return True
         else:
-            return exclusion_word
+            exclusion_words: list[str] = exclusion_words.split('|')
+            return exclusion_words
