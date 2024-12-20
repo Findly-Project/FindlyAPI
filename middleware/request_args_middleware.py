@@ -1,4 +1,5 @@
 from types import NoneType
+from soupsieve.util import lower
 from werkzeug.datastructures.structures import ImmutableMultiDict, MultiDict
 from enum import Enum
 
@@ -25,7 +26,7 @@ class RequestArgsMiddleware:
 
     def checking_allowed_request_args(self):
         all_args = self.args.keys()
-        allowed_args: set[str] = {'q', 'ms', 'on', 'epf', 'enf', 'ew'}
+        allowed_args: set[str] = {'q', 'ms', 'on', 'pf', 'nf', 'ew'}
 
         if len(all_args - allowed_args) > 0:
             return False
@@ -33,12 +34,14 @@ class RequestArgsMiddleware:
             return True
 
     def checking_overlapping_arguments(self) -> bool:
-        enable_name_filter: NoneType | str = self.args.get('enf')
+        enable_name_filter: NoneType | str = self.args.get('nf')
         query: None | str = self.args.get('q')
-        exclusion_word: None | str = self.args.get('ew')
+        exclusion_words: None | str = self.args.get('ew')
+        set_query: set[str] = set(map(lower, query.split()))
+        set_exclusion_words: set[str] = set(map(lower, exclusion_words.split('|')))
 
-        if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_word, query]):
-            if exclusion_word.strip().lower() in [x.lower() for x in query.split()]:
+        if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_words, query]):
+            if len(set_query.intersection(set_exclusion_words)) > 0:
                 return False
             else:
                 return True
@@ -74,7 +77,7 @@ class RequestArgsMiddleware:
             return only_new
 
     def checking_enable_filter_by_price_arg(self) -> bool | CheckArgsEnum:
-        enable_filter_by_price_arg: None | str | CheckArgsEnum = self.args.get('epf')
+        enable_filter_by_price_arg: None | str | CheckArgsEnum = self.args.get('pf')
         if enable_filter_by_price_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
@@ -88,7 +91,7 @@ class RequestArgsMiddleware:
             return enable_filter_by_price_arg
 
     def checking_enable_filter_by_name_arg(self) -> bool | CheckArgsEnum:
-        enable_filter_by_name_arg: None | str | CheckArgsEnum = self.args.get('enf')
+        enable_filter_by_name_arg: None | str | CheckArgsEnum = self.args.get('nf')
         if enable_filter_by_name_arg not in [None, NoneType, "off", "on"]:
             return False
         else:
@@ -113,5 +116,8 @@ class RequestArgsMiddleware:
         if exclusion_words is None:
             return True
         else:
+            if exclusion_words.replace('|', '') == '':
+                return False
+
             exclusion_words: list[str] = exclusion_words.split('|')
             return exclusion_words

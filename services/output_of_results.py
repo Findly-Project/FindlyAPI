@@ -71,9 +71,9 @@ async def output_of_results(
                 items_filtered_by_regular_expression
             )
             
-        if len(result_items) > max_size:
-            items_sorted_by_price: ProductList = ProductList(items_sorted_by_price[:max_size])
-        if result_items:
+        if len(items_sorted_by_price) > max_size:
+            items_sorted_by_price: ProductList = items_sorted_by_price[:max_size]
+        if items_sorted_by_price.products:
             output_result_items.add_list_of_products(func_name, items_sorted_by_price)
 
     return output_result_items
