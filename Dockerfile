@@ -1,11 +1,12 @@
 FROM python
 
-WORKDIR /usr/src/FindlyAPI
+WORKDIR /src
 
-COPY poetry.lock pyproject.toml ./
+COPY poetry.lock pyproject.toml /src
 RUN pip install poetry && poetry install
 
-COPY . .
+COPY . /src
 
 EXPOSE 5000
+
 CMD ["/bin/bash", "-c", "poetry run python app.py"]
