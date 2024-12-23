@@ -38,7 +38,10 @@ class RequestArgsMiddleware:
         query: None | str = self.args.get('q')
         exclusion_words: None | str = self.args.get('ew')
         set_query: set[str] = set(map(lower, query.split()))
-        set_exclusion_words: set[str] = set(map(lower, exclusion_words.split('|')))
+        if exclusion_words:
+            set_exclusion_words: set[str] = set(map(lower, exclusion_words.split('|')))
+        else:
+            return True
 
         if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_words, query]):
             if len(set_query.intersection(set_exclusion_words)) > 0:
