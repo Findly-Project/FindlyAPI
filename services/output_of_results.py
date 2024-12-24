@@ -1,3 +1,4 @@
+from pprint import pprint
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -73,6 +74,8 @@ async def output_of_results(
             
         if len(items_sorted_by_price) > max_size:
             items_sorted_by_price: ProductList = items_sorted_by_price[:max_size]
+        pprint(items_sorted_by_price)
+        print('\n\n')
         if items_sorted_by_price.products:
             output_result_items.add_list_of_products(func_name, items_sorted_by_price)
 

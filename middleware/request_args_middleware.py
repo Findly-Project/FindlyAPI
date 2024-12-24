@@ -37,15 +37,18 @@ class RequestArgsMiddleware:
         enable_name_filter: NoneType | str = self.args.get('nf')
         query: None | str = self.args.get('q')
         exclusion_words: None | str = self.args.get('ew')
-        set_query: set[str] = set(map(lower, query.split()))
-        set_exclusion_words: set[str] = set(map(lower, exclusion_words.split('|')))
-
-        if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_words, query]):
-            if len(set_query.intersection(set_exclusion_words)) > 0:
-                return False
+        if exclusion_words and query:
+            set_query: set[str] = set(map(lower, query.split()))
+            set_exclusion_words: set[str] = set(map(lower, exclusion_words.split('|')))
+            if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_words, query]):
+                if len(set_query.intersection(set_exclusion_words)) > 0:
+                    return False
+                else:
+                    return True
             else:
                 return True
-        return True
+        else:
+            return True
 
     def checking_max_size_arg(self) -> CheckArgsEnum | int:
         max_size_arg: None | int = self.args.get('ms')
