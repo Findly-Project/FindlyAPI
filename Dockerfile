@@ -1,11 +1,14 @@
-FROM python
+FROM python:3.12
 
-WORKDIR /usr/src/FindlyAPI
+WORKDIR /src
 
-COPY poetry.lock pyproject.toml ./
-RUN pip install poetry && poetry install
+COPY poetry.lock pyproject.toml /src/
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install
 
-COPY . .
+COPY . /src
 
-EXPOSE 5000
-CMD ["/bin/bash", "-c", "poetry run python app.py"]
+ENTRYPOINT hypercorn --reload --bind 0.0.0.0:5050 --workers 1 app:app
+
+EXPOSE 5050
