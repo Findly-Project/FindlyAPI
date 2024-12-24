@@ -1,10 +1,10 @@
+from types import NoneType
 import httpx
 from httpx import Response
 from bs4 import BeautifulSoup
-from bs4.element import ResultSet
-import logging
+from bs4.element import ResultSet, Tag
+from .product_models import ProductList, ProductData
 from utils.get_config.get_pars_config import GetParsConfig
-from .product_models import ProductData, ProductList
 
 
 async def get_21vek_data(query: str) -> ProductList:
@@ -22,9 +22,9 @@ async def get_21vek_data(query: str) -> ProductList:
     product_list: ProductList = ProductList()
 
     for i in data:
-        try:
-            price: str = i.find("span", class_="j-item-data").text
-            price: str = price.rstrip("0").replace(r",", ".")
+        price: Tag = i.find("span", class_="j-item-data")
+        if not isinstance(price, NoneType):
+            price: str = price.text.rstrip("0").replace(r",", ".")
             price: float = float(price.replace(r" ", ""))
 
             item: ProductData = ProductData(
@@ -33,11 +33,7 @@ async def get_21vek_data(query: str) -> ProductList:
                 image=i.find("span", class_="result__img__inner").img["src"],
                 price=price,
             )
-        except (TypeError, AttributeError):
-            continue
-        except Exception as e:
-            logging.error(e)
-        else:
+
             product_list.add_product(item)
 
     return product_list
