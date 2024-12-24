@@ -43,12 +43,7 @@ class RequestArgsMiddleware:
             if enable_name_filter in [None, NoneType, 'on'] and all([exclusion_words, query]):
                 if len(set_query.intersection(set_exclusion_words)) > 0:
                     return False
-                else:
-                    return True
-            else:
-                return True
-        else:
-            return True
+        return True
 
     def checking_max_size_arg(self) -> CheckArgsEnum | int:
         max_size_arg: None | int = self.args.get('ms')
