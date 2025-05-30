@@ -1,0 +1,193 @@
+2025-01-12 20:43:49,381 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-12 20:43:49,454 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-12 20:47:45,513 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-12 20:47:45,536 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-12 21:49:48,746 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-12 21:49:48,770 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-13 01:43:42,474 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-13 01:43:42,534 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-15 23:55:12,045 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-15 23:55:12,070 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-15 23:56:15,257 - app - ERROR - Exception on request GET /api/search
+
+
+Traceback (most recent call last):
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_transports\default.py", line 377, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\koloi\.pyenv\pyenv-win\versions\3.13.0\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\quart\app.py", line 1404, in handle_request
+    return await self.full_dispatch_request(request_context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\quart\app.py", line 1442, in full_dispatch_request
+    result = await self.handle_user_exception(error)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\quart\app.py", line 1030, in handle_user_exception
+    raise error
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\quart\app.py", line 1440, in full_dispatch_request
+    result = await self.dispatch_request(request_context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\quart\app.py", line 1536, in dispatch_request
+    return await self.ensure_async(handler)(**request_.view_args)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\Python_Projects\FindlyAPI\app.py", line 123, in main_view
+    data: MarketPlaceList = await output_of_results(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+        **kwargs
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\aiocache\decorators.py", line 109, in wrapper
+    return await self.decorator(f, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\aiocache\decorators.py", line 124, in decorator
+    result = await f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\Python_Projects\FindlyAPI\services\output_of_results.py", line 46, in output_of_results
+    pars_data: ProductList = await get_data_from_func(func_name, query, only_new, func)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\Python_Projects\FindlyAPI\services\output_of_results.py", line 95, in get_data_from_func
+    pars_data: ProductList = await func(query=query, only_new=only_new)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\Python_Projects\FindlyAPI\services\collecting_primary_data\get_kufar_data.py", line 19, in get_kufar_data
+    data: Response = await client.get(url)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1814, in get
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1585, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1674, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1702, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1739, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_client.py", line 1776, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_transports\default.py", line 376, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\koloi\.pyenv\pyenv-win\versions\3.13.0\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\koloi\AppData\Local\pypoetry\Cache\virtualenvs\findly-bfd4XiHy-py3.13\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2025-01-27 01:17:14,172 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-27 01:17:14,198 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-01-27 01:18:32,852 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-01-27 01:18:32,875 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-03-16 14:49:23,022 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-03-16 14:49:23,056 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+
+2025-03-23 22:10:15,850 - root - WARNING - Start FindlyAPI...
+
+
+
+2025-03-23 22:10:15,882 - hypercorn.error - INFO - Running on http://127.0.0.1:5000 (CTRL + C to quit)
+
+
+

@@ -20,7 +20,6 @@ class CheckArgsEnum(Enum):
 
 
 class RequestArgsMiddleware:
-
     def __init__(self, args: ImmutableMultiDict[str, str] | MultiDict[str, str]):
         self.args: ImmutableMultiDict[str, str] | MultiDict[str, str] = args
 

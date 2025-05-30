@@ -1,20 +1,18 @@
 from datetime import datetime
 import time
-from quart import Quart, request, abort, jsonify
-from quart.helpers import make_response
-from quart.wrappers import Response
 from services.collecting_primary_data.product_models import MarketPlaceList
 from services.output_of_results import output_of_results
 import logging
 from utils.get_config.get_quart_config import GetQuartConfig
-from middleware.reject_middleware import reject_middleware
 from middleware.request_args_middleware import (
     RequestArgsMiddleware,
     CheckArgsEnum
 )
 
+from fastapi import FastAPI, APIRouter
 
-app: Quart = Quart(__name__)
+
+app: FastAPI =FastAPI(title=__name__)
 config: dict = GetQuartConfig.quart_settings()
 
 DEBUG: bool = bool(int(config["DEBUG"]))
@@ -22,7 +20,7 @@ HOST: str = config["HOST"]
 PORT: int = int(config["PORT"])
 
 
-@app.errorhandler(404)
+@app.exception_handler(404)
 async def notfound_view(error) -> Response:
     content: Response = jsonify({'response_code': 404,
                        'default_error': str(error),
@@ -35,7 +33,7 @@ async def notfound_view(error) -> Response:
     return res
 
 
-@app.errorhandler(405)
+@app.exception_handler(405)
 async def method_not_allowed_view(error) -> Response:
     content: Response = jsonify({'response_code': 405,
                        'default_error': str(error),
@@ -48,7 +46,7 @@ async def method_not_allowed_view(error) -> Response:
     return res
 
 
-@app.errorhandler(403)
+@app.exception_handler(403)
 async def unauthorized_view(error) -> Response:
     content: Response = jsonify({'response_code': 403,
                        'default_error': str(error),
@@ -61,7 +59,7 @@ async def unauthorized_view(error) -> Response:
     return res
 
 
-@app.errorhandler(422)
+@app.exception_handler(422)
 async def unprocessable_content_view(error) -> Response:
     content: Response = jsonify({'response_code': 422,
                        'default_error': str(error),
@@ -74,12 +72,10 @@ async def unprocessable_content_view(error) -> Response:
     return res
 
 
-@app.route("/api/search", methods=["GET"])
-async def main_view() -> Response | str:
-    is_allowed: bool = await reject_middleware(request.remote_addr)
-    if not is_allowed:
-        await abort(403)
+api_router = APIRouter(prefix="/api")
 
+@app.get("/api/search")
+async def main_view() -> Response | str:
     start_collect_data: float = time.time()
     args: RequestArgsMiddleware = RequestArgsMiddleware(request.args)
     is_all_args_are_allowed: bool = args.checking_allowed_request_args()
@@ -157,15 +153,11 @@ async def main_view() -> Response | str:
 
 
 
-if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.WARNING,
-        filename="secret_data/logs.log",
-        filemode="a",
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s\n\n\n",
-    )
+logging.basicConfig(
+    level=logging.WARNING,
+    filename="secret_data/logs.log",
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s\n\n\n",
+)
 
-    logging.warning("Start FindlyAPI...")
-    print("\n\033[1m\033[30m\033[44m {} \033[0m".format("Start FindlyAPI..."))
-
-    app.run(debug=DEBUG, host=HOST, port=PORT)
+app.include_router(api_router)

@@ -1,4 +1,5 @@
-.venv/
+venv/
 __pycache__/
 secret_data/logs.log
 .idea
+uv.lock
