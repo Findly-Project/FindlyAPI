@@ -1,5 +1,5 @@
 import re
-from services.collecting_primary_data.product_models import ProductList
+from src.services.collecting_primary_data.product_models import ProductList
 
 
 def regular_expression(query: str, candidates: ProductList) -> ProductList:

@@ -1,4 +1,4 @@
-from ..collecting_primary_data.product_models import ProductList, SortProductList
+from src.services.collecting_primary_data.product_models import ProductList, SortProductList
 
 
 def filter_by_price(candidates: ProductList) -> ProductList:

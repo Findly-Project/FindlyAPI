@@ -4,7 +4,7 @@ from httpx import Response
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet, Tag
 from .product_models import ProductList, ProductData
-from utils.get_config.get_pars_config import GetParsConfig
+from src.utils.get_config.get_pars_config import GetParsConfig
 
 
 async def get_21vek_data(query: str) -> ProductList:

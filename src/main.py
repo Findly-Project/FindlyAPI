@@ -4,11 +4,11 @@ from datetime import datetime
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
 
-from middleware.request_args_middleware import RequestArgsMiddleware, CheckArgsEnum
-from error_handlers import HTTPErrorHandlers
-from services.collecting_primary_data.product_models import MarketPlaceList
-from services.output_of_results import output_of_results
-from models import RequestArgs
+from src.middleware.request_args_middleware import RequestArgsMiddleware, CheckArgsEnum
+from src.error_handlers import HTTPErrorHandlers
+from src.services.collecting_primary_data.product_models import MarketPlaceList
+from src.services.output_of_results import output_of_results
+from src.models import RequestArgs
 
 app: FastAPI = FastAPI(title=__name__)
 
@@ -76,16 +76,10 @@ async def main_view(request: Request, args: RequestArgs = Depends()) -> JSONResp
         "response_time": round(time.time() - start_collect_data, 3),
         "size_of_products": {
             "all": sum([len(products_data[x]) for x in products_data]),
-            "mmg": len(products_data.get("MMG") if products_data.get("MMG") else []),
-            "onliner": len(
-                products_data.get("Onliner") if products_data.get("Onliner") else []
-            ),
-            "kufar": len(
-                products_data.get("Kufar") if products_data.get("Kufar") else []
-            ),
-            "21vek": len(
-                products_data.get("21vek") if products_data.get("21vek") else []
-            ),
+            "mmg": len(products_data.get("MMG", [])),
+            "onliner": len(products_data.get("Onliner", [])),
+            "kufar": len(products_data.get("Kufar", [])),
+            "21vek": len(products_data.get("21vek", [])),
         },
         "request_args": {
             "max_size": max_size,
@@ -94,8 +88,7 @@ async def main_view(request: Request, args: RequestArgs = Depends()) -> JSONResp
             "enable_filter_by_price": enable_filter_by_price,
             "enable_filter_by_name": enable_filter_by_name,
             "exclusion_word": exclusion_words
-            if isinstance(exclusion_words, list)
-            else None,
+            if isinstance(exclusion_words, list) else None,
         },
         "request_url": request.url.path,
         "response_code": 200,

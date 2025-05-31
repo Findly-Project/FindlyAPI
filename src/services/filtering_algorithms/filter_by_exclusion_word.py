@@ -1,4 +1,4 @@
-from services.collecting_primary_data.product_models import ProductList
+from src.services.collecting_primary_data.product_models import ProductList
 
 
 def filter_by_exclusion_words(

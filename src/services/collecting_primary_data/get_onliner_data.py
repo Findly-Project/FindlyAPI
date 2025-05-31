@@ -2,7 +2,7 @@ import logging
 import httpx
 from httpx import Response
 import json
-from utils.get_config.get_pars_config import GetParsConfig
+from src.utils.get_config.get_pars_config import GetParsConfig
 from .product_models import ProductData, ProductList
 
 
