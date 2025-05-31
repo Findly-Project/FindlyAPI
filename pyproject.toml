@@ -17,7 +17,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.6.9,<0.7"]
+dev = [
+    "fastapi[standard]>=0.115.12",
+    "ruff>=0.6.9,<0.7",
+    "uvicorn>=0.34.2",
+]
 
 [build-system]
 requires = ["hatchling"]
