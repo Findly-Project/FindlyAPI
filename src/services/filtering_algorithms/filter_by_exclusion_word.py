@@ -1,7 +1,9 @@
 from services.collecting_primary_data.product_models import ProductList
 
 
-def filter_by_exclusion_words(exclusion_words: list[str], candidates: ProductList) -> ProductList:
+def filter_by_exclusion_words(
+    exclusion_words: list[str], candidates: ProductList
+) -> ProductList:
     clear_candidates: ProductList = ProductList()
     exclusion_words = set([x.lower().strip() for x in exclusion_words])
 

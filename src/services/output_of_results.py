@@ -1,4 +1,3 @@
-from pprint import pprint
 from types import NoneType
 from .collecting_primary_data.get_kufar_data import get_kufar_data
 from .collecting_primary_data.get_mmg_data import get_mmg_data
@@ -12,7 +11,7 @@ from .collecting_primary_data.product_models import (
 from services.filtering_algorithms import (
     filter_regular_expression,
     filter_for_category_based_on_price,
-    filter_by_exclusion_word
+    filter_by_exclusion_word,
 )
 from aiocache import cached
 from aiocache.serializers import PickleSerializer
@@ -42,12 +41,15 @@ async def output_of_results(
     output_result_items: MarketPlaceList = MarketPlaceList()
 
     for func_name, func in get_data_functions.items():
-
-        pars_data: ProductList = await get_data_from_func(func_name, query, only_new, func)
+        pars_data: ProductList = await get_data_from_func(
+            func_name, query, only_new, func
+        )
 
         if isinstance(exclusion_words, list):
             items_filtered_by_exclusion_word: ProductList = (
-                filter_by_exclusion_word.filter_by_exclusion_words(exclusion_words, pars_data)
+                filter_by_exclusion_word.filter_by_exclusion_words(
+                    exclusion_words, pars_data
+                )
             )
         else:
             items_filtered_by_exclusion_word: ProductList = pars_data
@@ -71,9 +73,11 @@ async def output_of_results(
             items_sorted_by_price: ProductList = SortProductList.sort_by_price(
                 items_filtered_by_regular_expression
             )
-            
+
         if len(items_sorted_by_price) > max_size:
-            items_sorted_by_price: ProductList = ProductList(items_sorted_by_price[:max_size])
+            items_sorted_by_price: ProductList = ProductList(
+                items_sorted_by_price[:max_size]
+            )
         if items_sorted_by_price.products:
             output_result_items.add_list_of_products(func_name, items_sorted_by_price)
 

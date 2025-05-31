@@ -68,4 +68,4 @@ class MarketPlaceList:
         return output_json
 
     def __str__(self):
-        return f'MarketPlaceList(list_of_products={self.list_of_products})'
+        return f"MarketPlaceList(list_of_products={self.list_of_products})"
