@@ -3,6 +3,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.middleware.request_args_middleware import RequestArgsMiddleware, CheckArgsEnum
 from src.error_handlers import HTTPErrorHandlers
@@ -11,6 +12,14 @@ from src.services.output_of_results import output_of_results
 from src.models import RequestArgs
 
 app: FastAPI = FastAPI(title=__name__)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "OPTIONS"],
+    allow_headers=["*"]
+)
 
 api_router = APIRouter(prefix="/api")
 
