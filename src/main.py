@@ -25,9 +25,9 @@ async def main_view(request: Request, request_args: SearchPayload) -> JSONRespon
         "query": request_args.query,
         "max_size": request_args.max_size,
         "only_new": request_args.filters.only_new,
-        "enable_filter_by_price": request_args.filters.price_filter,
-        "enable_filter_by_name": request_args.filters.name_filter,
-        "exclusion_words": request_args.filters.exclude_words,
+        "price_filter": request_args.filters.price_filter,
+        "name_filter": request_args.filters.name_filter,
+        "exclude_words": request_args.filters.exclude_words,
     }
     data: MarketPlaceList = await output_of_results(**kwargs)
 
@@ -68,6 +68,5 @@ app.add_middleware(
 )
 
 app.exception_handler(RequestValidationError)(HTTPErrorHandlers.unprocessable_content_view)
-app.exception_handler(422)(HTTPErrorHandlers.unprocessable_content_view)
 app.exception_handler(404)(HTTPErrorHandlers.notfound_view)
 app.exception_handler(405)(HTTPErrorHandlers.method_not_allowed_view)

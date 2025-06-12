@@ -21,10 +21,9 @@ class SearchPayload(BaseModel):
     def normalize_and_validate_query(cls, value: str) -> str:
         if len(value) > 20:
             raise ValueError('Query too long, max length is 20')
-        if not re.match(r'^[a-zA-Zа-яА-Я0-9-]*$', value):
+        if not re.match(r'^[a-zA-Zа-яА-Я0-9- ]*$', value):
             raise ValueError('The search query must contain letters, numbers or a minus sign')
-        transformed_query = value.strip().replace(' ', '+')
-        return transformed_query
+        return value
 
     @field_validator("max_size", mode='before')
     def validate_price(cls, value):
@@ -41,7 +40,8 @@ class SearchPayload(BaseModel):
             set_query: set[str] = set(x.lower() for x in query.split())
             set_exclusion_words: set[str] = set(x.lower() for x in exclusion_words)
             if len(set_query.intersection(set_exclusion_words)) > 0:
-                raise ValueError('When the filter by name is enabled, there cannot be an intersection between excluded words and query words.')
+                raise ValueError('When the filter by name is enabled, there cannot be an intersection between excluded words and query words')
         return self
 
     model_config = {"extra": "forbid"}
+

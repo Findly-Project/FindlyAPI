@@ -23,9 +23,9 @@ async def output_of_results(
     query: str,
     max_size: int | None,
     only_new: bool,
-    enable_filter_by_price: bool,
-    enable_filter_by_name: bool,
-    exclusion_words: list | bool,
+    price_filter: bool,
+    name_filter: bool,
+    exclude_words: list | bool,
 ) -> MarketPlaceList:
     if max_size in [None, NoneType]:
         max_size: int = 10
@@ -45,15 +45,15 @@ async def output_of_results(
             func_name, query, only_new, func
         )
 
-        if isinstance(exclusion_words, list):
+        if isinstance(exclude_words, list):
             items_filtered_by_exclusion_word: ProductList = (
                 filter_by_exclusion_word.filter_by_exclusion_words(
-                    exclusion_words, pars_data
+                    exclude_words, pars_data
                 )
             )
         else:
             items_filtered_by_exclusion_word: ProductList = pars_data
-        if not enable_filter_by_price:
+        if not price_filter:
             result_items = items_filtered_by_exclusion_word
         else:
             result_items: ProductList = (
@@ -62,7 +62,7 @@ async def output_of_results(
                 )
             )
 
-        if not enable_filter_by_name:
+        if not name_filter:
             items_sorted_by_price: ProductList = SortProductList.sort_by_price(
                 result_items
             )
