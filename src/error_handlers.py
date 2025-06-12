@@ -1,4 +1,6 @@
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 
 from datetime import datetime
@@ -34,15 +36,35 @@ class HTTPErrorHandlers:
         return res
 
     @staticmethod
-    def unprocessable_content_view(request: Request, exc: HTTPException) -> Response:
-        content: dict = {
-            "response_code": 422,
-            "default_error": exc.detail,
-            "pretty_error": "Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md",
-            "request_metadata": {
-                "date": datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
-                "request_url": request.url.path,
-            },
-        }
-        res: JSONResponse = JSONResponse(content, 422)
-        return res
+    def unprocessable_content_view(request: Request, exc: RequestValidationError) -> Response:
+        errors = exc.errors()
+        custom_messages = []
+        for error in errors:
+            field_name = error['loc'][-1]
+
+            if error['type'] == 'missing':
+                custom_messages.append({"error_type": "missing",
+                                        "error": {
+                                            "error_field": field_name,
+                                            "error_msg": "Missing required field"}
+                                        })
+            else:
+                custom_messages.append({"error_type": "validation",
+                                        "error": {
+                                            "error_field": field_name,
+                                            "error_msg": error['msg']}
+                                        })
+
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content=jsonable_encoder({
+                "response_code": 422,
+                "pretty_error": "Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md",
+                "specific_error": custom_messages,
+                "request_metadata": {
+                    "date": datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                    "request_url": request.url.path,
+                },
+
+            })
+        )
