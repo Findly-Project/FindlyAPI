@@ -2,7 +2,7 @@ import httpx
 from httpx import Response
 from bs4 import BeautifulSoup
 import logging
-from src.utils.get_config.get_pars_config import GetParsConfig
+from src.utils.get_config import GetParsConfig
 from .product_models import ProductData, ProductList
 import re
 

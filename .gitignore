@@ -1,5 +1,5 @@
 venv/
 __pycache__/
-src/secret_data/logs.log
+secret_data/logs.log
 .idea
 uv.lock
