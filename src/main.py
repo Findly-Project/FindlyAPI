@@ -17,7 +17,7 @@ app: FastAPI = FastAPI(title=__name__)
 api_router = APIRouter(prefix="/api")
 
 
-@api_router.get("/search")
+@api_router.post("/search")
 async def main_view(request: Request, request_args: SearchPayload) -> JSONResponse:
     start_collect_data: float = time.time()
 
@@ -63,7 +63,7 @@ app.add_middleware(
     CORSMiddleware, # type: ignore
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "OPTIONS"],
+    allow_methods=["POST", "OPTIONS"],
     allow_headers=["*"]
 )
 
