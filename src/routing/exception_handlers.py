@@ -4,11 +4,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 
 from datetime import datetime
+from httpx import ConnectTimeout, ConnectError
 
 
 class HTTPErrorHandlers:
     @staticmethod
-    async def notfound_view(request: Request, exc: HTTPException) -> JSONResponse:
+    def notfound_view(request: Request, exc: HTTPException) -> JSONResponse:
         content: dict = {
             "response_code": 404,
             "default_error": exc.detail,
@@ -22,7 +23,7 @@ class HTTPErrorHandlers:
         return res
 
     @staticmethod
-    async def method_not_allowed_view(request: Request, exc: HTTPException) -> JSONResponse:
+    def method_not_allowed_view(request: Request, exc: HTTPException) -> JSONResponse:
         content: dict = {
             "response_code": 405,
             "default_error": exc.detail,
@@ -68,3 +69,29 @@ class HTTPErrorHandlers:
 
             })
         )
+
+    @staticmethod
+    def pars_timeout_view(request: Request, exc: ConnectTimeout) -> JSONResponse:
+        content: dict = {
+            "response_code": 504,
+            "pretty_error": "Handle timeout exception when parse. Please try again later",
+            "request_metadata": {
+                "date": datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                "request_url": request.url.path,
+            },
+        }
+        res: JSONResponse = JSONResponse(content, 504)
+        return res
+
+    @staticmethod
+    def connect_error_view(request: Request, exc: ConnectError) -> JSONResponse:
+        content: dict = {
+            "response_code": 503,
+            "pretty_error": "The server has no internet connection. Please try again later",
+            "request_metadata": {
+                "date": datetime.now().strftime("%m-%d-%Y %H:%M:%S"),
+                "request_url": request.url.path,
+            },
+        }
+        res: JSONResponse = JSONResponse(content, 503)
+        return res

@@ -39,7 +39,7 @@ class ProductsList(BaseModel):
 class NamedProductsList:
     def __init__(self, name: str, products: ProductsList):
         self._name = name
-        self._products = products
+        self._products_list = products
 
     @property
     def name(self) -> str:
@@ -47,7 +47,7 @@ class NamedProductsList:
 
     @property
     def products_list(self) -> ProductsList:
-        return self._products
+        return self._products_list
 
     @name.setter
     def name(self, value):
@@ -55,25 +55,25 @@ class NamedProductsList:
 
     @products_list.setter
     def products_list(self, value):
-        self._products = value
+        self._products_list = value
 
 
 class ProductsListDTO:
     def __init__(self, *products: NamedProductsList) -> None:
-        self.tuple_of_products = products
+        self.tuple_of_products: tuple[NamedProductsList, ...] = products
 
     def __call__(self) -> dict:
         output_json: dict = {}
-        for marketplace, product_list in self.tuple_of_products:
+        for named_products_list in self.tuple_of_products:
             items: list = []
-            for item in product_list.products:
+            for item in named_products_list.products_list:
                 items.append(
                     {"image": item.image,
                      "link": item.link,
                      "name": item.name,
                      "price": item.price,}
                 )
-            output_json[marketplace]: dict[str] = items
+            output_json[named_products_list.name]: dict[str] = items
         return output_json
 
     def __str__(self):

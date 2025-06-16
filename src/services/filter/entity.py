@@ -48,4 +48,4 @@ class Filter:
         self.pars_data = result_items
 
     def get_filtering_products(self) -> ProductsList:
-        return self.pars_data
+        return ProductsList(products=self.pars_data.get_sorted_products())
