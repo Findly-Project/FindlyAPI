@@ -37,3 +37,13 @@ class SearchPayload(BaseModel):
 
     model_config = {"extra": "forbid"}
 
+    def __eq__(self, other):
+        if not isinstance(other, SearchPayload):
+            return NotImplemented
+        return all([self.query == other.query,
+                    self.max_size == other.max_size,
+                    self.filters == other.filters])
+
+    def __hash__(self):
+        return hash((self.query, self.max_size, self.filters))
+

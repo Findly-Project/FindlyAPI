@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.routing.exception_handlers import HTTPErrorHandlers
-from src.routing.api import api_router
+from src.routing.routers.api import api_router
 
 
 app: FastAPI = FastAPI(title=__name__)

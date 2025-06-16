@@ -12,25 +12,25 @@ class ProcessRequest:
         self.search_params = search_params
 
     @cached(ttl=5 * 60, serializer=PickleSerializer())
-    async def get_response(self):
+    async def get_response(self) -> list[NamedProductsList]:
         product_lists: list[NamedProductsList] = []
         product_parser: ProductParser = ProductParser(self.search_params.query)
 
         onliner_data: ProductsList = await product_parser.get_onliner_data()
-        product_lists.append(self.filter_pars_data(onliner_data, 'Onliner'))
+        product_lists.append(self._filter_pars_data(onliner_data, 'Onliner'))
 
         mmg_data: ProductsList = await product_parser.get_mmg_data()
-        product_lists.append(self.filter_pars_data(mmg_data, 'MMG'))
+        product_lists.append(self._filter_pars_data(mmg_data, 'MMG'))
 
         kufar_data: ProductsList = await product_parser.get_kufar_data(self.search_params.filters.only_new)
-        product_lists.append(self.filter_pars_data(kufar_data, 'Kufar'))
+        product_lists.append(self._filter_pars_data(kufar_data, 'Kufar'))
 
         _21vek_data: ProductsList = await product_parser.get_21vek_data()
-        product_lists.append(self.filter_pars_data(_21vek_data, '21vek'))
+        product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
 
         return product_lists
 
-    def filter_pars_data(self, pars_data: ProductsList, marketplace: str) -> NamedProductsList:
+    def _filter_pars_data(self, pars_data: ProductsList, marketplace: str) -> NamedProductsList:
         filters = self.search_params.filters.model_dump()
         max_size = self.search_params.max_size
         filter_data = Filter(pars_data)
@@ -47,3 +47,11 @@ class ProcessRequest:
             return NamedProductsList(marketplace, filter_data.get_filtering_products()[:max_size])
         else:
             return NamedProductsList(marketplace, filter_data.get_filtering_products())
+
+    def __eq__(self, other):
+        if not isinstance(other, ProcessRequest):
+            return NotImplemented
+        return self.search_params == other.search_params
+
+    def __hash__(self):
+        return hash(self.search_params)
