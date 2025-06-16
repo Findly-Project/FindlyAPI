@@ -36,28 +36,45 @@ class ProductsList(BaseModel):
         return f"ProductList(products={self.products})"
 
 
-class MarketPlaceList:
-    def __init__(self) -> None:
-        self.list_of_products: dict = {}
+class NamedProductsList:
+    def __init__(self, name: str, products: ProductsList):
+        self._name = name
+        self._products = products
 
-    def add_list_of_products(self, list_name: str, list_data: ProductsList) -> None:
-        self.list_of_products[list_name]: ProductsList = list_data
+    @property
+    def name(self) -> str:
+        return self._name
 
-    def get_json(self) -> dict:
+    @property
+    def products_list(self) -> ProductsList:
+        return self._products
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @products_list.setter
+    def products_list(self, value):
+        self._products = value
+
+
+class ProductsListDTO:
+    def __init__(self, *products: NamedProductsList) -> None:
+        self.tuple_of_products = products
+
+    def __call__(self) -> dict:
         output_json: dict = {}
-        for marketplace, product_list in self.list_of_products.items():
+        for marketplace, product_list in self.tuple_of_products:
             items: list = []
             for item in product_list.products:
                 items.append(
-                    {
-                        "image": item.image,
-                        "link": item.link,
-                        "name": item.name,
-                        "price": item.price,
-                    }
+                    {"image": item.image,
+                     "link": item.link,
+                     "name": item.name,
+                     "price": item.price,}
                 )
             output_json[marketplace]: dict[str] = items
         return output_json
 
     def __str__(self):
-        return f"MarketPlaceList(list_of_products={self.list_of_products})"
+        return f"MarketPlaceList(list_of_products={self.tuple_of_products})"

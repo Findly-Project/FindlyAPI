@@ -1,14 +1,10 @@
 from types import NoneType
-from .product_parser.get_kufar_data import get_kufar_data
-from .product_parser.get_mmg_data import get_mmg_data
-from .product_parser.get_onliner_data import get_onliner_data
-from .product_parser.get_21vek_data import get_21vek_data
 from src.services.product_parser.models.product_models import (
     ProductsList,
     MarketPlaceList,
-    SortProductList,
 )
-from src.services.filtering_algorithms import (
+from src.schemas.search_payload import SearchPayload
+from src.services.filter import (
     filter_regular_expression,
     filter_for_category_based_on_price,
     filter_by_exclusion_word,
@@ -19,14 +15,7 @@ from httpx import RemoteProtocolError, TimeoutException
 
 
 @cached(ttl=5 * 60, serializer=PickleSerializer())
-async def output_of_results(
-    query: str,
-    max_size: int | None,
-    only_new: bool,
-    price_filter: bool,
-    name_filter: bool,
-    exclude_words: list | bool,
-) -> MarketPlaceList:
+async def output_of_results(search_params: SearchPayload) -> MarketPlaceList:
     if max_size in [None, NoneType]:
         max_size: int = 10
     elif max_size == 0:
