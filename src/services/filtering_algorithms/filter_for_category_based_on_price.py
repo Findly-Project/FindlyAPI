@@ -1,8 +1,8 @@
-from src.services.collecting_primary_data.product_models import ProductList, SortProductList
+from src.services.product_parser.models.product_models import ProductsList, SortProductList
 
 
-def filter_by_price(candidates: ProductList) -> ProductList:
-    items_sorted_by_price: ProductList = SortProductList.sort_by_price(candidates)
+def filter_by_price(candidates: ProductsList) -> ProductsList:
+    items_sorted_by_price: ProductsList = SortProductList.sort_by_price(candidates)
     if len(items_sorted_by_price) > 1:
         while True:
             is_filter: bool = True

@@ -1,10 +1,10 @@
 from types import NoneType
-from .collecting_primary_data.get_kufar_data import get_kufar_data
-from .collecting_primary_data.get_mmg_data import get_mmg_data
-from .collecting_primary_data.get_onliner_data import get_onliner_data
-from .collecting_primary_data.get_21vek_data import get_21vek_data
-from .collecting_primary_data.product_models import (
-    ProductList,
+from .product_parser.get_kufar_data import get_kufar_data
+from .product_parser.get_mmg_data import get_mmg_data
+from .product_parser.get_onliner_data import get_onliner_data
+from .product_parser.get_21vek_data import get_21vek_data
+from src.services.product_parser.models.product_models import (
+    ProductsList,
     MarketPlaceList,
     SortProductList,
 )
@@ -41,41 +41,41 @@ async def output_of_results(
     output_result_items: MarketPlaceList = MarketPlaceList()
 
     for func_name, func in get_data_functions.items():
-        pars_data: ProductList = await get_data_from_func(
+        pars_data: ProductsList = await get_data_from_func(
             func_name, query, only_new, func
         )
 
         if isinstance(exclude_words, list):
-            items_filtered_by_exclusion_word: ProductList = (
+            items_filtered_by_exclusion_word: ProductsList = (
                 filter_by_exclusion_word.filter_by_exclusion_words(
                     exclude_words, pars_data
                 )
             )
         else:
-            items_filtered_by_exclusion_word: ProductList = pars_data
+            items_filtered_by_exclusion_word: ProductsList = pars_data
         if not price_filter:
             result_items = items_filtered_by_exclusion_word
         else:
-            result_items: ProductList = (
+            result_items: ProductsList = (
                 filter_for_category_based_on_price.filter_by_price(
                     items_filtered_by_exclusion_word
                 )
             )
 
         if not name_filter:
-            items_sorted_by_price: ProductList = SortProductList.sort_by_price(
+            items_sorted_by_price: ProductsList = SortProductList.sort_by_price(
                 result_items
             )
         else:
-            items_filtered_by_regular_expression: ProductList = (
+            items_filtered_by_regular_expression: ProductsList = (
                 filter_regular_expression.regular_expression(query, result_items)
             )
-            items_sorted_by_price: ProductList = SortProductList.sort_by_price(
+            items_sorted_by_price: ProductsList = SortProductList.sort_by_price(
                 items_filtered_by_regular_expression
             )
 
         if len(items_sorted_by_price) > max_size:
-            items_sorted_by_price: ProductList = ProductList(
+            items_sorted_by_price: ProductsList = ProductsList(
                 items_sorted_by_price[:max_size]
             )
         if items_sorted_by_price.products:
@@ -88,15 +88,15 @@ async def get_data_from_func(marketplace, query, only_new, func):
     try:
         match marketplace:
             case "Kufar":
-                pars_data: ProductList = await func(query=query, only_new=only_new)
+                pars_data: ProductsList = await func(query=query, only_new=only_new)
             case _:
-                pars_data: ProductList = await func(query=query)
+                pars_data: ProductsList = await func(query=query)
         return pars_data
 
     except (RemoteProtocolError, TimeoutException):
         match marketplace:
             case "Kufar":
-                pars_data: ProductList = await func(query=query, only_new=only_new)
+                pars_data: ProductsList = await func(query=query, only_new=only_new)
             case _:
-                pars_data: ProductList = await func(query=query)
+                pars_data: ProductsList = await func(query=query)
         return pars_data

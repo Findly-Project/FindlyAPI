@@ -1,9 +1,9 @@
 import re
-from src.services.collecting_primary_data.product_models import ProductList
+from src.services.product_parser.models.product_models import ProductsList
 
 
-def regular_expression(query: str, candidates: ProductList) -> ProductList:
-    clear_candidates: ProductList = ProductList()
+def regular_expression(query: str, candidates: ProductsList) -> ProductsList:
+    clear_candidates: ProductsList = ProductsList()
 
     for candidate in candidates:
         is_best_result: bool = bool(

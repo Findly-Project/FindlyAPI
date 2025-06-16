@@ -1,10 +1,10 @@
-from src.services.collecting_primary_data.product_models import ProductList
+from src.services.product_parser.models.product_models import ProductsList
 
 
 def filter_by_exclusion_words(
-    exclusion_words: list[str], candidates: ProductList
-) -> ProductList:
-    clear_candidates: ProductList = ProductList()
+    exclusion_words: list[str], candidates: ProductsList
+) -> ProductsList:
+    clear_candidates: ProductsList = ProductsList()
     exclusion_words = set([x.lower().strip() for x in exclusion_words])
 
     for candidate in candidates:

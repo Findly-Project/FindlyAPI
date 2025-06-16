@@ -1,23 +1,23 @@
-class ProductData:
-    default_image_url: str = "images/placeholder.png"
+from pydantic import BaseModel
 
-    def __init__(
-        self, link: str, name: str, price: float, image: str | None = default_image_url
-    ) -> None:
-        self.link: str = link
-        self.name: str = name
-        self.image: str = image
-        self.price: float = price
+
+class Product(BaseModel):
+    link: str
+    name: str
+    price: float
+    image: str = "images/placeholder.png"
 
     def __repr__(self) -> str:
-        return f"ProductData(name={self.name}, price={self.price}, link={self.link}, image={self.image})"
+        return f"Product(name={self.name}, price={self.price}, link={self.link}, image={self.image})"
 
 
-class ProductList:
-    def __init__(self, products: list[ProductData] | None = None) -> None:
-        self.products: list[ProductData] = products if products else []
+class ProductsList(BaseModel):
+    products: list[Product] = []
 
-    def add_product(self, product: ProductData) -> None:
+    def get_sorted_products(self) -> list[Product]:
+        return sorted(self.products, key=lambda item: item.price)
+
+    def add_product(self, product: Product) -> None:
         self.products.append(product)
 
     def del_product(self, index: int) -> None:
@@ -36,20 +36,12 @@ class ProductList:
         return f"ProductList(products={self.products})"
 
 
-class SortProductList:
-    @staticmethod
-    def sort_by_price(products: ProductList) -> ProductList:
-        return ProductList(
-            sorted([item for item in products.products], key=lambda c: c.price)
-        )
-
-
 class MarketPlaceList:
     def __init__(self) -> None:
         self.list_of_products: dict = {}
 
-    def add_list_of_products(self, list_name: str, list_data: ProductList) -> None:
-        self.list_of_products[list_name]: ProductList = list_data
+    def add_list_of_products(self, list_name: str, list_data: ProductsList) -> None:
+        self.list_of_products[list_name]: ProductsList = list_data
 
     def get_json(self) -> dict:
         output_json: dict = {}

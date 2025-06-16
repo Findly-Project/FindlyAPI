@@ -1,15 +1,7 @@
 import re
-from typing import List
 from pydantic import BaseModel, field_validator, model_validator
 
-
-class SearchFilters(BaseModel):
-    only_new: bool = False
-    name_filter: bool = False
-    price_filter: bool = False
-    exclude_words: List[str] = []
-
-    model_config = {"extra": "forbid"}
+from src.schemas.search_filters import SearchFilters
 
 
 class SearchPayload(BaseModel):
