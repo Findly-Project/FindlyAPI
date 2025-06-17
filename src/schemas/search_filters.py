@@ -19,4 +19,4 @@ class SearchFilters(BaseModel):
                     self.exclude_words == other.exclude_words])
 
     def __hash__(self):
-        return hash((self.only_new, self.name_filter, self.price_filter, self.exclude_words))
+        return hash((self.only_new, self.name_filter, self.price_filter, *self.exclude_words))

@@ -22,8 +22,10 @@ class Filter:
 
                 if is_filter:
                     self.pars_data = result_items
+                    return
         else:
             self.pars_data = result_items
+            return
 
     def by_name(self, query: str):
         result_items: ProductsList = ProductsList()

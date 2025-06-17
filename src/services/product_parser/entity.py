@@ -1,3 +1,5 @@
+import time
+
 import httpx
 from httpx import Response
 
@@ -16,11 +18,18 @@ class ProductParser:
     async def get_21vek_data(self) -> ProductsList:
         _21vek_pars_config: dict = GetParsConfig.get_21vek_pars_config()
         url: str = _21vek_pars_config["main_api_url"].format(query=self.query)
-
+        st = time.time()
+        print('\nstart collect\n')
         async with httpx.AsyncClient(timeout=10.0) as client:
             data: Response = await client.get(url)
 
-        return From21vekDTO(data)()
+        print(f'receive done in {round(time.time()-st, 4)}s\n')
+        kc = time.time()
+        res = From21vekDTO(data)()
+
+        print(f'serialize done in {round(time.time() - kc, 4)}s\n')
+
+        return res
 
     async def get_kufar_data(self, only_new: bool) -> ProductsList:
         kufar_pars_config: dict = GetParsConfig.get_kufar_pars_config()
