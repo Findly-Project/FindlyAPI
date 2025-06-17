@@ -5,7 +5,7 @@ from src.services.product_parser.models.product_models import ProductsList, Prod
 
 class Filter:
     def __init__(self, pars_data: ProductsList):
-        self.pars_data = pars_data
+        self.pars_data: ProductsList = pars_data
 
     def by_price(self) -> None:
         result_items: list[Product] = self.pars_data.get_sorted_products()
@@ -21,10 +21,10 @@ class Filter:
                         continue
 
                 if is_filter:
-                    self.pars_data = result_items
+                    self.pars_data = ProductsList(products=result_items)
                     return
         else:
-            self.pars_data = result_items
+            self.pars_data = ProductsList(products=result_items)
             return
 
     def by_name(self, query: str):
