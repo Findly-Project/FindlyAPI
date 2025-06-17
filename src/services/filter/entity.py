@@ -8,7 +8,7 @@ class Filter:
         self.pars_data: ProductsList = pars_data
 
     def by_price(self) -> None:
-        result_items: list[Product] = self.pars_data.get_sorted_products()
+        result_items: list[Product] = self.pars_data.get_sorted_by_price_products()
         if len(result_items) > 1:
             while True:
                 is_filter: bool = True
@@ -50,4 +50,4 @@ class Filter:
         self.pars_data = result_items
 
     def get_filtering_products(self) -> ProductsList:
-        return ProductsList(products=self.pars_data.get_sorted_products())
+        return ProductsList(products=self.pars_data.get_sorted_by_price_products())

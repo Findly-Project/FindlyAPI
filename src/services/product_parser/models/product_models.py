@@ -14,7 +14,7 @@ class Product(BaseModel):
 class ProductsList(BaseModel):
     products: list[Product] = []
 
-    def get_sorted_products(self) -> list[Product]:
+    def get_sorted_by_price_products(self) -> list[Product]:
         return sorted(self.products, key=lambda item: item.price)
 
     def add_product(self, product: Product) -> None:
