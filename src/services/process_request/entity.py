@@ -17,17 +17,21 @@ class ProcessRequest:
         product_lists: list[NamedProductsList] = []
         product_parser: ProductParser = ProductParser(self.search_params.query)
 
-        onliner_data: ProductsList = await product_parser.get_onliner_data()
-        product_lists.append(self._filter_pars_data(onliner_data, 'Onliner'))
+        if not "Onliner" in self.search_params.exclude_marketplaces:
+            onliner_data: ProductsList = await product_parser.get_onliner_data()
+            product_lists.append(self._filter_pars_data(onliner_data, 'Onliner'))
 
-        mmg_data: ProductsList = await product_parser.get_mmg_data()
-        product_lists.append(self._filter_pars_data(mmg_data, 'MMG'))
+        if not "MMG" in self.search_params.exclude_marketplaces:
+            mmg_data: ProductsList = await product_parser.get_mmg_data()
+            product_lists.append(self._filter_pars_data(mmg_data, 'MMG'))
 
-        kufar_data: ProductsList = await product_parser.get_kufar_data(self.search_params.filters.only_new)
-        product_lists.append(self._filter_pars_data(kufar_data, 'Kufar'))
+        if not "Kufar" in self.search_params.exclude_marketplaces:
+            kufar_data: ProductsList = await product_parser.get_kufar_data(self.search_params.filters.only_new)
+            product_lists.append(self._filter_pars_data(kufar_data, 'Kufar'))
 
-        _21vek_data: ProductsList = await product_parser.get_21vek_data()
-        product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
+        if not "21vek" in self.search_params.exclude_marketplaces:
+            _21vek_data: ProductsList = await product_parser.get_21vek_data()
+            product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
 
         return product_lists
 

@@ -1,4 +1,6 @@
 import re
+from typing import Literal, Optional
+
 from pydantic import BaseModel, field_validator, model_validator
 
 from src.schemas.search_filters import SearchFilters
@@ -7,6 +9,7 @@ from src.schemas.search_filters import SearchFilters
 class SearchPayload(BaseModel):
     query: str
     max_size: int = 20
+    exclude_marketplaces: list[Literal["MMG", "Onliner", "Kufar", "21vek"]] = []
     filters: SearchFilters = SearchFilters()
 
     @field_validator('query', mode='before')
