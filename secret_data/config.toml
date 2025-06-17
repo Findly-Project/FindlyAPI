@@ -1,6 +1,7 @@
 [GetData]
 [Pars.21vek]
-main_api_url="https://www.21vek.by/search/?sa=&term={query}"
+main_api_url="https://gate.21vek.by/search-composer/api/v1/search/suggest?query={query}"
+first_part_url="https://www.21vek.by"
 
 [Pars.Onliner]
 main_api_url="https://www.onliner.by/sdapi/catalog.api/search/products?query={query}&page={page}"
@@ -11,5 +12,6 @@ pars_url_any="https://api.kufar.by/search-api/v2/search/rendered-paginated?lang=
 first_part_image_url="https://rms.kufar.by/v1/list_thumbs_2x/"
 
 [Pars.MMG]
-main_pars_url="https://mmg.by/search/?q={query}"
-first_part_url="https://mmg.by"
+main_pars_url="https://mmg.by/ajax/search.php?q={query}&type=json"
+first_part_image_url="https://mmg.by"
+first_part_url="https://mmg.by/shop/w/Item/"

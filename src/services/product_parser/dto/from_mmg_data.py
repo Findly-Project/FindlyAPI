@@ -1,5 +1,4 @@
-import re
-from bs4 import BeautifulSoup
+import json
 from httpx import Response
 
 from src.services.product_parser.dto.base_from_dto import BaseFromDTO
@@ -7,30 +6,22 @@ from src.services.product_parser.models.product_models import ProductsList, Prod
 
 
 class FromMmgDTO(BaseFromDTO):
-    def __init__(self, pars_data: Response, first_part_url: str):
+    def __init__(self, pars_data: Response, first_part_url: str, first_part_image_url: str):
         self.pars_data: str = pars_data.text
         self.first_part_url: str = first_part_url
+        self.first_part_image_url: str = first_part_image_url
 
     def __call__(self) -> ProductsList:
-        soup: BeautifulSoup = BeautifulSoup(self.pars_data, "html.parser")
-        data_soup: list = soup.find_all("div", class_="item")
-
         product_list: ProductsList = ProductsList()
+        data: dict = json.loads(self.pars_data)
 
-        for i in data_soup:
-            try:
-                price: str = i.find("span", class_="price").text
-                price: float = float(re.sub(r"[^\d.]", "", price).rstrip("."))
-
-                item: Product = Product(
-                    link=self.first_part_url + i.find("a", class_="title")["href"],
-                    name=i.find("a", class_="title").text.strip(),
-                    image=self.first_part_url + i.find("div", class_="listener").img["src"],
-                    price=price,
-                )
-            except (TypeError, AttributeError):
-                continue
-            else:
-                product_list.add_product(item)
+        for i in data.get('items', []):
+            item: Product = Product(
+                link=self.first_part_url + i["id"],
+                name=i["name"].strip(),
+                image=self.first_part_image_url + i["img"],
+                price=float(i["cost"].replace(',', '.')),
+            )
+            product_list.add_product(item)
 
         return product_list

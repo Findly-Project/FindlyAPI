@@ -1,6 +1,5 @@
 from aiocache import cached
 from aiocache.serializers import PickleSerializer
-import time
 
 from src.schemas.search_payload import SearchPayload
 from src.services.product_parser.entity import ProductParser
@@ -15,40 +14,20 @@ class ProcessRequest:
 
     @cached(ttl=5 * 60, serializer=PickleSerializer(), key_builder=key_from_instance_hash)
     async def get_response(self) -> list[NamedProductsList]:
-        start = time.time()
-        print('start collect')
         product_lists: list[NamedProductsList] = []
         product_parser: ProductParser = ProductParser(self.search_params.query)
 
-        print(f'\nstart collect onliner')
         onliner_data: ProductsList = await product_parser.get_onliner_data()
         product_lists.append(self._filter_pars_data(onliner_data, 'Onliner'))
-        print('collect onliner done\n')
-        dn = time.time()
 
-        print(f'start collect mmg')
         mmg_data: ProductsList = await product_parser.get_mmg_data()
         product_lists.append(self._filter_pars_data(mmg_data, 'MMG'))
-        print('collect mmg done\n')
-        ps = time.time()
 
-        print(f'start collect kufar')
         kufar_data: ProductsList = await product_parser.get_kufar_data(self.search_params.filters.only_new)
         product_lists.append(self._filter_pars_data(kufar_data, 'Kufar'))
-        print('collect kufar done\n')
-        ds = time.time()
 
-        print(f'start collect 21vek')
         _21vek_data: ProductsList = await product_parser.get_21vek_data()
         product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
-        print('collect 21vek done\n')
-        ct = time.time()
-
-        print(f'collect done - {round(ct - start, 4)}\n'
-              f'onliner - {round(dn - start, 4)}\n'
-              f'mmg - {round(ps - dn, 4)}\n'
-              f'kufar - {round(ds - ps, 4)}\n'
-              f'21vek - {round(ct - ds, 4)}\n')
 
         return product_lists
 
@@ -56,7 +35,6 @@ class ProcessRequest:
         filters = self.search_params.filters.model_dump()
         max_size = self.search_params.max_size
         filter_data = Filter(pars_data)
-        print(f'start filter {marketplace}')
         filter_data.by_exclude_words(filters['exclude_words'])
 
         if filters['price_filter']:
@@ -64,8 +42,6 @@ class ProcessRequest:
 
         if filters['name_filter']:
             filter_data.by_name(self.search_params.query)
-
-        print(f'done filter {marketplace}')
 
         if len(filter_data.get_filtering_products()) > max_size:
             return NamedProductsList(marketplace, filter_data.get_filtering_products()[:max_size])

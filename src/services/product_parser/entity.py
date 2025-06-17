@@ -1,5 +1,3 @@
-import time
-
 import httpx
 from httpx import Response
 
@@ -18,18 +16,11 @@ class ProductParser:
     async def get_21vek_data(self) -> ProductsList:
         _21vek_pars_config: dict = GetParsConfig.get_21vek_pars_config()
         url: str = _21vek_pars_config["main_api_url"].format(query=self.query)
-        st = time.time()
-        print('\nstart collect\n')
+        first_part_url: str = _21vek_pars_config["first_part_url"]
         async with httpx.AsyncClient(timeout=10.0) as client:
             data: Response = await client.get(url)
 
-        print(f'receive done in {round(time.time()-st, 4)}s\n')
-        kc = time.time()
-        res = From21vekDTO(data)()
-
-        print(f'serialize done in {round(time.time() - kc, 4)}s\n')
-
-        return res
+        return From21vekDTO(data, first_part_url)()
 
     async def get_kufar_data(self, only_new: bool) -> ProductsList:
         kufar_pars_config: dict = GetParsConfig.get_kufar_pars_config()
@@ -49,12 +40,13 @@ class ProductParser:
 
         query: str = self.query.replace(" ", "+")
         first_part_url: str = mmg_pars_config["first_part_url"]
+        first_part_image_url: str = mmg_pars_config["first_part_image_url"]
         url: str = mmg_pars_config["main_pars_url"].format(query=query)
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             data: Response = await client.get(url)
 
-        return FromMmgDTO(data, first_part_url)()
+        return FromMmgDTO(data, first_part_url, first_part_image_url)()
 
     async def get_onliner_data(self) -> ProductsList:
         onliner_pars_data: dict = GetParsConfig.get_onliner_pars_config()

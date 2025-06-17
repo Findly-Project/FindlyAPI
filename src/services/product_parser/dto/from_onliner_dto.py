@@ -13,7 +13,7 @@ class FromOnlinerDTO(BaseFromDTO):
         product_list: ProductsList = ProductsList()
         data: dict = json.loads(self.pars_data)
 
-        for i in data["products"]:
+        for i in data.get("products", []):
             if i["prices"]:
                 item: Product = Product(
                     link=i["html_url"],
