@@ -10,5 +10,4 @@ api_router = APIRouter(prefix="/api")
 
 @api_router.post("/search")
 async def main_view(request_args: SearchPayload, request_metadata = Depends(get_request_metadata)) -> JSONResponse:
-    return await main_view_implementation(request_args=request_args,
-                                          request_metadata=request_metadata)
+    return await main_view_implementation(request_args=request_args, request_metadata=request_metadata)

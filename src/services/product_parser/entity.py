@@ -59,3 +59,4 @@ class ProductParser:
 
         return FromOnlinerDTO(data)()
 
+

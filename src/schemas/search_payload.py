@@ -1,6 +1,5 @@
 import re
-from typing import Literal, Optional
-
+from typing import Literal
 from pydantic import BaseModel, field_validator, model_validator
 
 from src.schemas.search_filters import SearchFilters
@@ -9,7 +8,7 @@ from src.schemas.search_filters import SearchFilters
 class SearchPayload(BaseModel):
     query: str
     max_size: int = 20
-    exclude_marketplaces: list[Literal["MMG", "Onliner", "Kufar", "21vek"]] = []
+    exclude_marketplaces: tuple[Literal["MMG", "Onliner", "Kufar", "21vek"], ...] = ()
     filters: SearchFilters = SearchFilters()
 
     @field_validator('query', mode='before')
@@ -38,15 +37,6 @@ class SearchPayload(BaseModel):
                 raise ValueError('When the filter by name is enabled, there cannot be an intersection between excluded words and query words')
         return self
 
-    model_config = {"extra": "forbid"}
+    model_config = {"extra": "forbid", "frozen": True}
 
-    def __eq__(self, other):
-        if not isinstance(other, SearchPayload):
-            return NotImplemented
-        return all([self.query == other.query,
-                    self.max_size == other.max_size,
-                    self.filters == other.filters])
-
-    def __hash__(self):
-        return hash((self.query, self.max_size, self.filters))
 

@@ -17,21 +17,25 @@ class ProcessRequest:
         product_lists: list[NamedProductsList] = []
         product_parser: ProductParser = ProductParser(self.search_params.query)
 
-        if not "Onliner" in self.search_params.exclude_marketplaces:
+        if "Onliner" not in self.search_params.exclude_marketplaces:
             onliner_data: ProductsList = await product_parser.get_onliner_data()
             product_lists.append(self._filter_pars_data(onliner_data, 'Onliner'))
 
-        if not "MMG" in self.search_params.exclude_marketplaces:
+        if "MMG" not in self.search_params.exclude_marketplaces:
             mmg_data: ProductsList = await product_parser.get_mmg_data()
             product_lists.append(self._filter_pars_data(mmg_data, 'MMG'))
 
-        if not "Kufar" in self.search_params.exclude_marketplaces:
+        if "Kufar" not in self.search_params.exclude_marketplaces:
             kufar_data: ProductsList = await product_parser.get_kufar_data(self.search_params.filters.only_new)
             product_lists.append(self._filter_pars_data(kufar_data, 'Kufar'))
 
-        if not "21vek" in self.search_params.exclude_marketplaces:
+        if "21vek" not in self.search_params.exclude_marketplaces:
             _21vek_data: ProductsList = await product_parser.get_21vek_data()
             product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
+
+        if "Wildberries" not in self.search_params.exclude_marketplaces:
+            wb_data: ProductsList = await product_parser.get_wb_data()
+            product_lists.append(self._filter_pars_data(wb_data, 'Wildberries'))
 
         return product_lists
 
