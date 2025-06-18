@@ -1,17 +1,17 @@
 import re
 from typing import Literal
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator, model_validator, Field
 
 from src.schemas.search_filters import SearchFilters
 
 
 class SearchPayload(BaseModel):
-    query: str
-    max_size: int = 20
-    exclude_marketplaces: tuple[Literal["MMG", "Onliner", "Kufar", "21vek"], ...] = ()
-    filters: SearchFilters = SearchFilters()
+    query: str = Field(strict=True, description="Key phrase for search")
+    max_size: int = Field(strict=True, default=20, description="Max size for search")
+    exclude_marketplaces: tuple[Literal["MMG", "Onliner", "Kufar", "21vek"], ...] = Field(description="Exclude marketplaces when searching", default=())
+    filters: SearchFilters = Field(default=SearchFilters(), description="Search filters")
 
-    @field_validator('query', mode='before')
+    @field_validator('query', mode='after')
     def normalize_and_validate_query(cls, value: str) -> str:
         if len(value) > 20:
             raise ValueError('Query too long, max length is 20')
@@ -19,7 +19,7 @@ class SearchPayload(BaseModel):
             raise ValueError('The search query must contain letters, numbers or a minus sign')
         return value
 
-    @field_validator("max_size", mode='before')
+    @field_validator("max_size", mode='after')
     def validate_price(cls, value):
         if not (10 <= value <= 40):
             raise ValueError("Incorrect max size of products")

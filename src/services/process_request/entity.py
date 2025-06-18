@@ -33,10 +33,6 @@ class ProcessRequest:
             _21vek_data: ProductsList = await product_parser.get_21vek_data()
             product_lists.append(self._filter_pars_data(_21vek_data, '21vek'))
 
-        if "Wildberries" not in self.search_params.exclude_marketplaces:
-            wb_data: ProductsList = await product_parser.get_wb_data()
-            product_lists.append(self._filter_pars_data(wb_data, 'Wildberries'))
-
         return product_lists
 
     def _filter_pars_data(self, pars_data: ProductsList, marketplace: str) -> NamedProductsList:

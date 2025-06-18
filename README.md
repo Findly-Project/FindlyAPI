@@ -1,136 +1,203 @@
 # FindlyAPI
 
-**Этот API предоставляет функциональность для поиска товаров на различных маркетплейсах с возможностью фильтрации и
-настройки параметров запроса.**
+**API для поиска товаров на различных маркетплейсах с возможностью гибкой фильтрации и настройки параметров запроса.**
+
+---
 
 ## Основной эндпоинт: `/api/search`
 
-### Метод: `GET`
+### Метод: `POST`
 
-### Описание:
-
-Этот эндпоинт выполняет поиск продуктов на нескольких маркетплейсах с учетом различных фильтров и параметров. Возвращает
-JSON-ответ с результатами поиска, включая метаданные запроса.
+Этот эндпоинт выполняет поиск продуктов на нескольких маркетплейсах. Параметры поиска и фильтрации передаются в теле запроса в формате JSON. В ответ возвращается JSON с результатами поиска и метаданными запроса.
 
 ---
 
-### Параметры запроса
+### Тело запроса (Request Body)
 
-<table>
-<tr><td>Параметр</td><td>Тип данных</td><td>Описание</td><td>Возможные значения</td><td>Обязателен ли</td></tr>
-<tr><td><code>q</code></td><td><code>string</code></td><td>Запрос для поиска продуктов. Это основной параметр, который определяет, что искать.</td><td>Любая строка: <code>iPhone 13</code> ; <code>samsung s23</code> ; <code>xiaomi pad 6</code></td><td>Да</td></tr>
-<tr><td><code>ms</code></td><td><code>int</code></td><td>Максимальное количество продуктов для возврата. Указывает максимальное количество товаров, которое будет возвращено.</td><td>Целое число от <code>1</code> до <code>40</code></td><td>Нет</td></tr>
-<tr><td><code>on</code></td><td><code>string</code></td><td>Фильтр для показа только новых продуктов. Если включено, возвращаются только новые товары.</td><td><code>on</code> или <code>off</code> (по умолчанию <code>on</code>, если не указано)</td><td>Нет</td></tr>
-<tr><td><code>pf</code></td><td><code>string</code></td><td>Фильтр для включения фильтрации по цене. Если указано, будет применена фильтрация продуктов по цене.</td><td><code>on</code> или <code>off</code> (по умолчанию <code>on</code>, если не указано)</td><td>Нет</td></tr>
-<tr><td><code>nf</code></td><td><code>string</code></td><td>Фильтр для включения фильтрации по имени. Если указано, будет применена фильтрация по имени продукта.</td><td><code>on</code> или <code>off</code> (по умолчанию <code>on</code>, если не указано)</td><td>Нет</td></tr>
-<tr><td><code>ew</code></td><td><code>string</code></td><td>Слово (или слова), которые необходимо исключить из результатов поиска. При необходимости указать несколько слов следует разделять их вертикальной чертой. Также слова, передаваемые в аргументе не должны содержаться в самом запросе, то есть в аргументе <code>q</code>. Если указан этот параметр, API исключит все товары, содержащие это слово.</td><td><code>pro</code><br/><code>pro|max|plus</code><br/><code>5g|4g|lite</code></td><td>Нет</td></tr>
-</table>
+Тело запроса должно быть в формате `application/json` и соответствовать следующей структуре:
 
----
 
-### Примеры запроса
+| Параметр | Тип | Описание | Значение по умолчанию | Обязательный |
+| :-- | :-- | :-- | :-- | :-- |
+| `query` | `string` | Поисковый запрос. Основной параметр, определяющий, что искать. | — | **Да** |
+| `max_size` | `integer` | Максимальное количество товаров для возврата с каждого маркетплейса. | `20` | Нет |
+| `exclude_marketplaces` | `array[string]` | Список маркетплейсов, которые нужно исключить из результатов поиска. | `[]` | Нет |
+| `filters` | `object` | Объект с дополнительными фильтрами для уточнения поиска. | `{}` | Нет |
 
-##### Поиск продуктов по запросу "iPhone 13" с максимальным количеством 10 продуктов.
+#### Вложенные параметры в `filters`:
 
-```http
-GET /api/search?q=iPhone+13&ms=10
-```
+| Параметр | Тип | Описание | Значение по умолчанию |
+| :-- | :-- | :-- | :-- |
+| `only_new` | `boolean` | Если `true`, в результатах будут только новые товары. | `false` |
+| `name_filter` | `boolean` | Включает дополнительную фильтрацию по названию товара. | `false` |
+| `price_filter` | `boolean` | Включает дополнительную фильтрацию по цене товара. | `false` |
+| `exclude_words` | `array[string]` | Список слов, которые нужно исключить из названий товаров в результатах поиска. | `[]` |
 
-##### Поиск только новых товаров "iPhone 13" с фильтрацией по цене.
-
-```http
-GET /api/search?q=iPhone+13&on=on&pf=on
-```
-
-##### Поиск продуктов "iPhone 13", исключая слово "refurbished".
-
-```http
-GET /api/search?q=iPhone+13&ew=refurbished
-```
 
 ---
 
-## Примеры тела ответа
+### Примеры запросов
 
-### Успешный ответ (код 200)
+**Пример тела запроса (JSON)**
 
-Ответ включает два объекта: `products_data` (данные о продуктах) и `request_metadata` (метаданные запроса).
+Поиск "iPhone 12" с максимальным размером выборки 20, с исключением маркетплейсов "MMG" и "21vek":
 
-Пример ответа:
+```json
+{
+  "query": "iphone 12",
+  "max_size": 20,
+  "exclude_marketplaces": ["MMG", "21vek"],
+  "filters": {
+    "only_new": false,
+    "name_filter": false,
+    "price_filter": false,
+    "exclude_words": ["pro"]
+  }
+}
+```
+
+**Пример запроса с помощью cURL**
+
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/api/search' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "string",
+  "max_size": 20,
+  "exclude_marketplaces": ["MMG", "Onliner", "21vek", "Kufar"],
+  "filters": {
+    "only_new": false,
+    "name_filter": false,
+    "price_filter": false,
+    "exclude_words": []
+  }
+}'
+```
+
+
+---
+
+## Примеры ответов сервера
+
+#### Успешный ответ (код 200)
+
+Ответ содержит два основных ключа: `products_data` с найденными товарами, сгруппированными по маркетплейсам, и `request_metadata` с информацией о запросе.
+
+**Пример ответа:**
 
 ```json
 {
   "products_data": {
-    "MMG": [
-      ...
-    ],
     "Onliner": [
-      ...
+      {
+        "image": "https://imgproxy.onliner.by/...",
+        "link": "https://catalog.onliner.by/mobile/apple/iphone12",
+        "name": "Apple iPhone 12 64GB (черный)",
+        "price": 1385.0
+      }
     ],
     "Kufar": [
-      ...
-    ],
-    "21vek": [
-      ...
+      {
+        "image": "https://rms.kufar.by/v1/...",
+        "link": "https://www.kufar.by/item/1021695505",
+        "name": "чехол на айфон 12",
+        "price": 3.0
+      }
     ]
   },
   "request_metadata": {
-    "date": "12-17-2024 12:34:56",
-    "response_time": 0.123,
-    "size_of_products": {
-      "all": 150,
-      "mmg": 50,
-      "onliner": 40,
-      "kufar": 30,
-      "21vek": 30
-    },
+    "date": "06-18-2025 18:15:45",
     "request_args": {
-      "max_size": 10,
-      "only_new": true,
-      "query": "iPhone 13",
-      "enable_filter_by_price": true,
-      "enable_filter_by_name": true,
-      "exclusion_word": "refurbished"
+      "query": "iphone 12",
+      "max_size": 20,
+      "exclude_marketplaces": [
+        "MMG",
+        "21vek"
+      ],
+      "filters": {
+        "only_new": false,
+        "name_filter": false,
+        "price_filter": false,
+        "exclude_words": [
+          "pro"
+        ]
+      }
     },
-    "request_url": "http://localhost:5000/api/search?q=iPhone+13&ms=10",
-    "response_code": 200
+    "request_url": "/api/search",
+    "response_code": 200,
+    "response_time": 1.5221
   }
 }
 ```
 
-Пример тела товара:
+
+## Негативные ответы сервера
+
+**Ошибка валидации (код 422 - Unprocessable Entity)**
+
+Эта ошибка возникает, если тело запроса не соответствует схеме: например, отсутствует обязательное поле или тип данных неверный.
+
+**Причина:** Отсутствует обязательное поле `query`.
 
 ```json
 {
-  "image": "https://rms.kufar.by/v1/",
-  "link": "https://www.kufar.by/item/",
-  "name": "xiaomi 13 lite 256gb",
-  "price": 390.0
+    "response_code": 422,
+    "pretty_error": "Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md",
+    "specific_error": [
+        {
+            "error_type": "missing",
+            "error": {
+                "error_field": "query",
+                "error_msg": "Missing required field"
+            }
+        }
+    ],
+    "request_metadata": {
+        "date": "06-18-2025 20:10:04",
+        "request_url": "/api/search"
+    }
 }
 ```
 
-### Неуспешный ответ (код, к примеру, 422)
+**Причина:** Неверный тип данных для поля `max_size` (ожидается `integer`, передан `string`).
 
 ```json
 {
-  "default_error": "422 Unprocessable Entity: The request was well-formed but was unable to be followed due to semantic errors.",
-  "pretty_error": "Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md",
-  "request_metadata": {
-    "date": "12-17-2024 22:09:58",
-    "request_url": "http://127.0.0.1:5000/api/search?pf=on&on=off&ew=air",
-    "response_code": 422
-  }
+    "response_code": 422,
+    "pretty_error": "Incorrect request parameters, read the API documentation https://github.com/koloideal/FindlyAPI/blob/main/README.md",
+    "specific_error": [
+        {
+            "error_type": "validation",
+            "error": {
+                "error_field": "max_size",
+                "error_msg": "Input should be a valid integer"
+            }
+        }
+    ],
+    "request_metadata": {
+        "date": "06-18-2025 20:10:41",
+        "request_url": "/api/search"
+    }
 }
 ```
 
-## Возможные ошибки ответа
+**Причина:** Метод запроса не разрешён (`POST` единственный разрешенный)
 
-| **Ошибка** | **Описание**                                  |
-|------------|-----------------------------------------------|
-| **405**    | **Метод не поддерживается для этого ресурса** |
-| **404**    | **Не найден ресурс**                          |
-| **403**    | **Доступ запрещен**                           |
-| **422**    | **Некорректные параметры запроса**            |
+```json
+{
+    "response_code": 405,
+    "default_error": "Method Not Allowed",
+    "pretty_error": "Request method not allowed",
+    "request_metadata": {
+        "date": "06-18-2025 20:21:28",
+        "request_url": "/api/search"
+    }
+}
+```
 
-
+<div style="display: flex">
+    <div>MIT 2025</div><div style="position: absolute; right: 0">made by kolo</div>
+</div>
 

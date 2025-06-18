@@ -40,9 +40,12 @@ class HTTPErrorHandlers:
     def unprocessable_content_view(request: Request, exc: RequestValidationError) -> Response:
         errors = exc.errors()
         custom_messages = []
+        default_errors = []
         for error in errors:
-            field_name = error['loc'][-1]
+            if error in default_errors:
+                continue
 
+            field_name = error['loc'][-1]
             if error['type'] == 'missing':
                 custom_messages.append({"error_type": "missing",
                                         "error": {
@@ -55,6 +58,7 @@ class HTTPErrorHandlers:
                                             "error_field": field_name,
                                             "error_msg": error['msg']}
                                         })
+            default_errors.append(error)
 
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
