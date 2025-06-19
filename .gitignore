@@ -4,3 +4,4 @@ secret_data/logs.log
 .idea
 uv.lock
 test.py
+dist

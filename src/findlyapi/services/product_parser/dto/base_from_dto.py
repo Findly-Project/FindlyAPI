@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.services.product_parser.models.product_models import ProductsList
+from findlyapi.services.product_parser.models.product_models import ProductsList
 
 
 class BaseFromDTO(ABC):

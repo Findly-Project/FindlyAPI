@@ -1,8 +1,8 @@
 import json
 from httpx import Response
 
-from src.services.product_parser.dto.base_from_dto import BaseFromDTO
-from src.services.product_parser.models.product_models import ProductsList, Product
+from findlyapi.services.product_parser.dto.base_from_dto import BaseFromDTO
+from findlyapi.services.product_parser.models.product_models import ProductsList, Product
 
 
 class FromMmgDTO(BaseFromDTO):

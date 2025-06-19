@@ -1,6 +1,6 @@
 import re
 
-from src.services.product_parser.models.product_models import ProductsList, Product
+from findlyapi.services.product_parser.models.product_models import ProductsList, Product
 
 
 class Filter:

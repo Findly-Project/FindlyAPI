@@ -1,12 +1,12 @@
 import httpx
 from httpx import Response
 
-from src.services.product_parser.dto.from_21vek_dto import From21vekDTO
-from src.services.product_parser.dto.from_kufar_dto import FromKufarDTO
-from src.services.product_parser.dto.from_mmg_data import FromMmgDTO
-from src.services.product_parser.dto.from_onliner_dto import FromOnlinerDTO
-from src.services.product_parser.models.product_models import ProductsList
-from src.utils.get_config import GetParsConfig
+from findlyapi.services.product_parser.dto.from_21vek_dto import From21vekDTO
+from findlyapi.services.product_parser.dto.from_kufar_dto import FromKufarDTO
+from findlyapi.services.product_parser.dto.from_mmg_data import FromMmgDTO
+from findlyapi.services.product_parser.dto.from_onliner_dto import FromOnlinerDTO
+from findlyapi.services.product_parser.models.product_models import ProductsList
+from findlyapi.utils.get_config import GetParsConfig
 
 
 class ProductParser:

@@ -1,11 +1,11 @@
 from aiocache import cached
 from aiocache.serializers import PickleSerializer
 
-from src.schemas.search_payload import SearchPayload
-from src.services.product_parser.entity import ProductParser
-from src.services.product_parser.models.product_models import ProductsList, NamedProductsList
-from src.services.filter.entity import Filter
-from src.utils.key_from_instance_hash import key_from_instance_hash
+from findlyapi.schemas.search_payload import SearchPayload
+from findlyapi.services.product_parser.entity import ProductParser
+from findlyapi.services.product_parser.models.product_models import ProductsList, NamedProductsList
+from findlyapi.services.filter.entity import Filter
+from findlyapi.utils.key_from_instance_hash import key_from_instance_hash
 
 
 class ProcessRequest:

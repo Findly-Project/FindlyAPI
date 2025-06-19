@@ -2,7 +2,7 @@ import re
 from typing import Literal
 from pydantic import BaseModel, field_validator, model_validator, Field
 
-from src.schemas.search_filters import SearchFilters
+from findlyapi.schemas.search_filters import SearchFilters
 
 
 class SearchPayload(BaseModel):
