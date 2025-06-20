@@ -7,29 +7,39 @@ class Filter:
     def __init__(self, pars_data: ProductsList):
         self.pars_data: ProductsList = pars_data
 
-    def by_price(self) -> None:
+    def by_price(self, tolerance: float) -> None:
         result_items: list[Product] = self.pars_data.get_sorted_by_price_products()
-        if len(result_items) > 1:
-            while True:
-                is_filter: bool = True
-                for i in range(len(result_items) - 1):
-                    try:
-                        if result_items[i + 1].price / result_items[i].price > 2:
-                            result_items.pop(i)
-                            is_filter: bool = False
-                    except IndexError:
-                        continue
+        if len(result_items) == 0:
+            self.pars_data = ProductsList()
 
-                if is_filter:
-                    self.pars_data = ProductsList(products=result_items)
-                    return
-        else:
-            self.pars_data = ProductsList(products=result_items)
-            return
+        n = len(result_items)
+        dp = [1] * n
+        prev_idx = [-1] * n
+
+        for i in range(1, n):
+            for j in range(i):
+                if abs(result_items[i].price - result_items[j].price) <= tolerance * result_items[j].price:
+                    if dp[j] + 1 > dp[i]:
+                        dp[i] = dp[j] + 1
+                        prev_idx[i] = j
+        max_len_idx = 0
+        if n > 0:
+            max_len = dp[0]
+            for i in range(1, n):
+                if dp[i] > max_len:
+                    max_len = dp[i]
+                    max_len_idx = i
+        sequence = []
+        current_idx = max_len_idx
+        while current_idx != -1:
+            sequence.append(result_items[current_idx])
+            current_idx = prev_idx[current_idx]
+
+        self.pars_data = ProductsList(products=sequence[::-1])
 
     def by_name(self, query: str):
         result_items: ProductsList = ProductsList()
-        for candidate in self.pars_data:
+        for candidate in self.pars_data.products:
             is_best_result: bool = bool(re.match(rf"^(.*\s)?{query}(\s.*)?$", candidate.name, re.IGNORECASE))
             if is_best_result:
                 result_items.add_product(candidate)
@@ -40,7 +50,7 @@ class Filter:
         result_items: ProductsList = ProductsList()
         exclusion_words = set([x.lower().strip() for x in exclude_words])
 
-        for candidate in self.pars_data:
+        for candidate in self.pars_data.products:
             list_of_word: set[str] = set([x.lower() for x in candidate.name.split()])
             if len(list_of_word.intersection(exclusion_words)) > 0:
                 continue

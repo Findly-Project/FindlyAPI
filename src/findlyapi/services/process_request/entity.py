@@ -41,8 +41,8 @@ class ProcessRequest:
         filter_data = Filter(pars_data)
         filter_data.by_exclude_words(filters['exclude_words'])
 
-        if filters['price_filter']:
-            filter_data.by_price()
+        if filters['price_filter']['is_enabled']:
+            filter_data.by_price(filters['price_filter']['tolerance'])
 
         if filters['name_filter']:
             filter_data.by_name(self.search_params.query)
