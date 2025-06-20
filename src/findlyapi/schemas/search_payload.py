@@ -5,9 +5,21 @@ from pydantic import BaseModel, field_validator, model_validator, Field
 from findlyapi.schemas.search_filters import SearchFilters
 
 
+class MaxSize(BaseModel):
+    size: int = Field(strict=True, default=20, description="Max size for search")
+    max_or_min_cut: Literal["max", "min"] = Field(default="min", description="Max or min cut in response")
+
+    @field_validator("size", mode='after')
+    def validate_price(cls, value):
+        if not (10 <= value <= 40):
+            raise ValueError("Incorrect max size of products")
+        return value
+
+    model_config = {"extra": "forbid", "frozen": True}
+
 class SearchPayload(BaseModel):
     query: str = Field(strict=True, description="Key phrase for search")
-    max_size: int = Field(strict=True, default=20, description="Max size for search")
+    max_size: MaxSize = Field(strict=True, default=MaxSize(), description="Max size for search")
     exclude_marketplaces: tuple[Literal["MMG", "Onliner", "Kufar", "21vek"], ...] = Field(description="Exclude marketplaces when searching", default=())
     filters: SearchFilters = Field(default=SearchFilters(), description="Search filters")
 
@@ -17,12 +29,6 @@ class SearchPayload(BaseModel):
             raise ValueError('Query too long, max length is 20')
         if not re.match(r'^[a-zA-Zа-яА-Я0-9- ]*$', value):
             raise ValueError('The search query must contain letters, numbers or a minus sign')
-        return value
-
-    @field_validator("max_size", mode='after')
-    def validate_price(cls, value):
-        if not (10 <= value <= 40):
-            raise ValueError("Incorrect max size of products")
         return value
 
     @model_validator(mode='after')

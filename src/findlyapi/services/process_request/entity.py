@@ -39,6 +39,7 @@ class ProcessRequest:
         filters = self.search_params.filters.model_dump()
         max_size = self.search_params.max_size
         filter_data = Filter(pars_data)
+
         filter_data.by_exclude_words(filters['exclude_words'])
 
         if filters['price_filter']['is_enabled']:
@@ -47,8 +48,13 @@ class ProcessRequest:
         if filters['name_filter']:
             filter_data.by_name(self.search_params.query)
 
-        if len(filter_data.get_filtering_products()) > max_size:
-            return NamedProductsList(marketplace, filter_data.get_filtering_products()[:max_size])
+        if size_products := len(filter_data.get_filtering_products()) > max_size.size:
+            if max_size.max_or_min_cut == "min":
+                return NamedProductsList(marketplace, filter_data.get_filtering_products()[:max_size.size])
+            elif max_size.max_or_min_cut == "max":
+                return NamedProductsList(marketplace, filter_data.get_filtering_products()[size_products - max_size.size - 1:])
+            else:
+                return NamedProductsList(marketplace, ProductsList())
         else:
             return NamedProductsList(marketplace, filter_data.get_filtering_products())
 
