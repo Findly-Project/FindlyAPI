@@ -2,9 +2,9 @@ from aiocache import cached
 from aiocache.serializers import PickleSerializer
 
 from findlyapi.schemas.search_payload import SearchPayload
+from findlyapi.services.filter.entity import Filter
 from findlyapi.services.product_parser.entity import ProductParser
 from findlyapi.services.product_parser.models.product_models import ProductsList, NamedProductsList
-from findlyapi.services.filter.entity import Filter
 from findlyapi.utils.key_from_instance_hash import key_from_instance_hash
 
 

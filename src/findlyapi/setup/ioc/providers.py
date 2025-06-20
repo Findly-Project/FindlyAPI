@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Callable
 
-from fastapi import Request
 from dishka import Provider, provide, Scope
+from fastapi import Request
 
 from findlyapi.schemas.search_payload import SearchPayload
 

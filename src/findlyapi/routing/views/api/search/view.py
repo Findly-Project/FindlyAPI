@@ -1,5 +1,6 @@
 import time
 from typing import Callable
+
 from fastapi.responses import JSONResponse
 
 from findlyapi.schemas.search_payload import SearchPayload

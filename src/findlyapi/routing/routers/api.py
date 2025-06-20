@@ -1,11 +1,11 @@
 from typing import Callable
 
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from dishka.integrations.fastapi import DishkaRoute, FromDishka
 
-from findlyapi.schemas.search_payload import SearchPayload
 from findlyapi.routing.views.api.search.view import main_view_implementation
+from findlyapi.schemas.search_payload import SearchPayload
 
 api_router = APIRouter(prefix="/api", route_class=DishkaRoute)
 

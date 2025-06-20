@@ -1,10 +1,9 @@
+import uvicorn
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
-import uvicorn
 
 from findlyapi.setup.app_factory import create_async_ioc_container, create_app, configure_app
 from findlyapi.setup.ioc.registry import get_providers
-
 
 app: FastAPI = create_app()
 

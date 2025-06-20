@@ -4,11 +4,12 @@ __all__ = (
     "create_async_ioc_container",
 )
 from collections.abc import Iterable
+
 from dishka import AsyncContainer, Provider, make_async_container
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
 from httpx import ConnectError, ConnectTimeout
 
 from findlyapi.routing.exception_handlers import HTTPErrorHandlers

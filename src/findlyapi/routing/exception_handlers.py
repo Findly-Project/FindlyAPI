@@ -1,9 +1,9 @@
+from datetime import datetime
+
 from fastapi import HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
-
-from datetime import datetime
 from httpx import ConnectTimeout, ConnectError
 
 
