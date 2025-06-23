@@ -11,6 +11,7 @@ class Filter:
         result_items: list[Product] = self.pars_data.get_sorted_by_price_products()
         if len(result_items) == 0:
             self.pars_data = ProductsList()
+            return
 
         n = len(result_items)
         dp = [1] * n
