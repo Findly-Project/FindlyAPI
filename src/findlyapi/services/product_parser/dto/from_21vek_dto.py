@@ -18,6 +18,8 @@ class From21vekDTO(BaseFromDTO):
         data: dict = list(filter(lambda x: x.get('group_type') == 'products', data['data']))[0]
 
         for i in data.get('items', []):
+            if i['price'].replace(' ', '') == 'нетнаскладе':
+                continue
             item: Product = Product(
                 link=self.first_part_url + i["url"],
                 name=i["name"].strip(),
